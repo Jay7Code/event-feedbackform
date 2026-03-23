@@ -12,9 +12,13 @@ define("DB_NAME", "event_feedback_db");
 define("DB_USER", "root");
 define("DB_PASS", "");
 
-// ─── Admin credentials (hardcoded — only one admin) ───
+// ─── Admin credentials (fallback / initial setup) ───
 define("ADMIN_USERNAME", "admin");
 define("ADMIN_PASSWORD", "admin123");
+
+// ─── Superadmin credentials ───
+define("SUPERADMIN_USERNAME", "superadmin");
+define("SUPERADMIN_PASSWORD", "superadmin123");
 
 /**
  * Get a mysqli database connection.

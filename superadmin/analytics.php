@@ -1,12 +1,11 @@
 <?php
 /**
  * ═══════════════════════════════════════════════════════════════
- * ANALYTICS PAGE
- * Average ratings per category with visual bar charts.
+ * SUPER ADMIN ANALYTICS
  * ═══════════════════════════════════════════════════════════════
  */
 session_start();
-if (!isset($_SESSION["admin_logged_in"]) || $_SESSION["admin_logged_in"] !== true) {
+if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in"] !== true) {
     header("Location: login.php");
     exit();
 }
@@ -75,7 +74,7 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Analytics - Event Feedback</title>
+    <title>Analytics - Super Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -104,13 +103,13 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
 <body class="font-sans min-h-screen text-white">
     <!-- Nav -->
     <nav class="border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <div>
-                <h1 class="font-serif text-xl font-bold text-white/90">Analytics</h1>
-                <p class="text-white/40 text-xs">Event Feedback System</p>
+                <h1 class="font-serif text-xl font-bold text-gold-400">Super Admin Panel</h1>
+                <p class="text-white/40 text-[0.65rem] uppercase tracking-widest">Event Feedback System</p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="index.php" class="text-sm text-white/50 hover:text-white transition-colors">Dashboard</a>
+                <a href="index.php" class="text-sm text-white/50 hover:text-white transition-colors">Manage Admins</a>
                 <a href="analytics.php" class="text-sm text-gold-400 hover:text-gold-300 transition-colors font-medium border-b border-gold-400 pb-1">Analytics</a>
                 <a href="reports.php" class="text-sm text-white/50 hover:text-white transition-colors">Reports</a>
                 <span class="text-white/20">|</span>
@@ -119,7 +118,7 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <main class="max-w-6xl mx-auto px-6 py-10">
         <?php if ($totalCount == 0): ?>
             <div class="glass-card rounded-2xl p-12 text-center">
                 <p class="text-white/30 text-lg">No feedback data yet. Analytics will appear once submissions are received.</p>
@@ -127,10 +126,10 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
         <?php else: ?>
 
         <!-- Top stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="glass-card rounded-xl p-5 text-center">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="glass-card rounded-xl p-5 text-center border-t-2 border-t-gold-400">
                 <p class="text-3xl font-bold text-gold-400"><?= $totalCount ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Total Responses</p>
+                <p class="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest mt-2">Total Responses</p>
             </div>
             <?php
             $grandAvg = 0; $cnt = 0;
@@ -139,15 +138,15 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
             }
             $grandAvg = $cnt > 0 ? round($grandAvg / $cnt, 1) : 0;
             ?>
-            <div class="glass-card rounded-xl p-5 text-center">
-                <p class="text-3xl font-bold <?= $grandAvg >= 4 ? 'text-green-400' : ($grandAvg >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $grandAvg ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Grand Average</p>
+            <div class="glass-card rounded-xl p-5 text-center border-t-2 <?= $grandAvg >= 4 ? 'border-t-emerald-400' : ($grandAvg >= 3 ? 'border-t-yellow-400' : 'border-t-red-400') ?>">
+                <p class="text-3xl font-bold <?= $grandAvg >= 4 ? 'text-emerald-400' : ($grandAvg >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $grandAvg ?></p>
+                <p class="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest mt-2">Grand Average</p>
             </div>
-            <div class="glass-card rounded-xl p-5 text-center">
-                <p class="text-3xl font-bold text-green-400"><?= $participation["Yes"] ?? 0 ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Would Return</p>
+            <div class="glass-card rounded-xl p-5 text-center border-t-2 border-t-emerald-400">
+                <p class="text-3xl font-bold text-emerald-400"><?= $participation["Yes"] ?? 0 ?></p>
+                <p class="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest mt-2">Would Return</p>
             </div>
-            <div class="glass-card rounded-xl p-5 text-center">
+            <div class="glass-card rounded-xl p-5 text-center border-t-2 border-t-gold-400">
                 <?php
                 $best = ""; $bestVal = 0;
                 foreach (array_keys($ratingCategories) as $k) {
@@ -155,26 +154,26 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
                 }
                 ?>
                 <p class="text-lg font-bold text-gold-400 leading-tight"><?= $best ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Top Category</p>
+                <p class="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest mt-2">Top Category</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <!-- Category Averages -->
             <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="px-6 py-4 border-b border-white/[0.06]">
+                <div class="px-6 py-5 border-b border-white/[0.06]">
                     <h2 class="font-serif text-lg text-white/80">Average by Category</h2>
                 </div>
-                <div class="px-6 py-5 space-y-4">
+                <div class="px-6 py-6 space-y-4">
                     <?php foreach ($ratingCategories as $key => $label): ?>
                         <?php $val = floatval($avgs["avg_$key"] ?? 0); $pct = ($val / 5) * 100; ?>
                         <div>
                             <div class="flex justify-between mb-1">
                                 <span class="text-sm text-white/60"><?= $label ?></span>
-                                <span class="text-sm font-bold <?= $val >= 4 ? 'text-green-400' : ($val >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= number_format($val, 1) ?></span>
+                                <span class="text-sm font-bold <?= $val >= 4 ? 'text-emerald-400' : ($val >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= number_format($val, 1) ?></span>
                             </div>
-                            <div class="w-full h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
-                                <div class="h-full rounded-full bar-animate <?= $val >= 4 ? 'bg-green-400' : ($val >= 3 ? 'bg-yellow-400' : 'bg-red-400') ?>"
+                            <div class="w-full h-2.5 bg-white/[0.04] rounded-full overflow-hidden">
+                                <div class="h-full rounded-full bar-animate <?= $val >= 4 ? 'bg-emerald-400' : ($val >= 3 ? 'bg-yellow-400' : 'bg-red-400') ?>"
                                      style="width:<?= $pct ?>%; animation-delay:<?= array_search($key, array_keys($ratingCategories)) * 0.1 ?>s"></div>
                             </div>
                         </div>
@@ -184,84 +183,47 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
 
             <!-- Rating Distribution -->
             <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="px-6 py-4 border-b border-white/[0.06]">
+                <div class="px-6 py-5 border-b border-white/[0.06]">
                     <h2 class="font-serif text-lg text-white/80">Rating Distribution</h2>
                 </div>
-                <div class="px-6 py-5 space-y-3">
+                <div class="px-6 py-6 space-y-3">
                     <?php for ($i = 5; $i >= 1; $i--): ?>
                         <?php $cnt = $distribution[$i]; $pct = ($cnt / $maxDist) * 100; ?>
                         <div class="flex items-center gap-3">
                             <span class="w-4 text-sm text-gold-400 font-bold text-right"><?= $i ?></span>
-                            <div class="flex-1 h-6 bg-white/[0.04] rounded-lg overflow-hidden">
+                            <div class="flex-1 h-6 bg-white/[0.03] rounded-lg overflow-hidden">
                                 <div class="h-full rounded-lg bar-animate flex items-center px-2"
                                      style="width:<?= max($pct, 2) ?>%;background:linear-gradient(90deg,rgba(201,169,110,0.6),rgba(201,169,110,0.3));animation-delay:<?= (5 - $i) * 0.1 ?>s">
-                                    <?php if ($cnt > 0): ?>
-                                        <span class="text-xs font-bold text-white/80"><?= $cnt ?></span>
-                                    <?php endif; ?>
+                                     <?php if ($cnt > 0): ?>
+                                         <span class="text-xs font-bold text-white/80"><?= $cnt ?></span>
+                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     <?php endfor; ?>
                 </div>
 
-                <!-- Participation pie (simple text breakdown) -->
+                <!-- Participation pie -->
                 <div class="px-6 py-5 border-t border-white/[0.06]">
-                    <h3 class="text-sm font-bold text-gold-400 uppercase tracking-wider mb-4">Future Participation</h3>
+                    <h3 class="text-[0.65rem] font-bold text-gold-400/80 uppercase tracking-widest mb-4">Future Participation</h3>
                     <div class="flex gap-4 justify-center">
                         <?php
-                        $partColors = ['Yes' => 'bg-green-500', 'No' => 'bg-red-500', 'Maybe' => 'bg-yellow-500'];
+                        $partColors = ['Yes' => 'bg-emerald-500', 'No' => 'bg-red-500', 'Maybe' => 'bg-yellow-500'];
                         foreach (['Yes', 'No', 'Maybe'] as $opt):
                             $cnt = $participation[$opt] ?? 0;
                             $pctPart = $totalCount > 0 ? round(($cnt / $totalCount) * 100) : 0;
                         ?>
                             <div class="text-center">
-                                <div class="w-14 h-14 rounded-full <?= $partColors[$opt] ?>/10 flex items-center justify-center mx-auto mb-2">
+                                <div class="w-14 h-14 rounded-full <?= $partColors[$opt] ?>/10 flex items-center justify-center mx-auto mb-2 border border-<?= str_replace('bg-', '', $partColors[$opt]) ?>/20">
                                     <span class="text-lg font-bold <?= str_replace('bg-', 'text-', $partColors[$opt]) ?>/80"><?= $pctPart ?>%</span>
                                 </div>
-                                <p class="text-xs text-white/40"><?= $opt ?></p>
+                                <p class="text-[0.65rem] font-bold uppercase tracking-wider text-white/40"><?= $opt ?></p>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Recent submissions -->
-        <div class="glass-card rounded-2xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/[0.06]">
-                <h2 class="font-serif text-lg text-white/80">Recent Submissions</h2>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-white/[0.06]">
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Event</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Attendee</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gold-400 uppercase tracking-wider">Overall</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Submitted</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gold-400 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recent as $r): ?>
-                            <tr class="border-b border-white/[0.03] hover:bg-white/[0.03] transition-colors">
-                                <td class="px-6 py-3 text-white/80"><?= htmlspecialchars($r["event_name"]) ?></td>
-                                <td class="px-6 py-3 text-white/60"><?= htmlspecialchars($r["attendee_name"]) ?></td>
-                                <td class="px-6 py-3 text-center">
-                                    <?php $oe = intval($r["overall_experience"]); ?>
-                                    <span class="font-bold <?= $oe >= 4 ? 'text-green-400' : ($oe >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $oe ?>/5</span>
-                                </td>
-                                <td class="px-6 py-3 text-white/40 text-xs"><?= date("M d, Y g:i A", strtotime($r["created_at"])) ?></td>
-                                <td class="px-6 py-3 text-center">
-                                    <a href="view.php?id=<?= $r["id"] ?>" class="text-gold-400/70 hover:text-gold-400 text-xs font-semibold uppercase tracking-wider">View</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <?php endif; ?>
     </main>
 </body>

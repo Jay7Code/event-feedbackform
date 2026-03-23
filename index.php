@@ -101,8 +101,9 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; background: #fff;
         }
         .rating-circle:hover { border-color: #C0A062; background: #FDFBF8; }
-        .rating-radio:checked+.rating-circle { background: #153A26; border-color: #C0A062; box-shadow: 0 4px 10px rgba(21, 58, 38, 0.2); }
-        .rating-radio:focus+.rating-circle { box-shadow: 0 0 0 3px rgba(192, 160, 98, 0.2); } /* focus ring */
+        .rating-radio:checked ~ .rating-circle { background: #153A26; border-color: #C0A062; box-shadow: 0 4px 10px rgba(21, 58, 38, 0.2); }
+        .rating-radio:checked ~ .rating-number { color: #153A26; font-weight: 800; }
+        .rating-radio:focus ~ .rating-circle { box-shadow: 0 0 0 3px rgba(192, 160, 98, 0.2); } /* focus ring */
 
         /* ── ELEGANT FORM INPUTS ── */
         .elegant-input {
@@ -162,7 +163,7 @@
             <div class="w-12 h-1 bg-antique-500 mx-auto mb-6"></div>
 
             <h1 class="font-serif text-4xl sm:text-5xl md:text-5xl text-pine-900 mb-4 animate-fade-up tracking-wide">
-                Event Evaluation
+                Pre and post feedback-form
             </h1>
             
             <p class="font-serif italic text-pine-700/80 text-sm md:text-[1rem] max-w-lg mx-auto leading-relaxed animate-fade-up" style="animation-delay: 0.1s;">
@@ -253,8 +254,9 @@
                             <div class="flex items-center gap-4 sm:gap-6">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
                                     <div class="flex flex-col items-center">
-                                        <label class="cursor-pointer group relative">
+                                        <label class="cursor-pointer group flex flex-col items-center">
                                             <input type="radio" name="<?= $name ?>" value="<?= $i ?>" <?= $i === 1 ? "required" : "" ?> class="rating-radio sr-only">
+                                            <span class="text-[0.7rem] font-bold text-pine-700/60 mb-1 transition-all duration-300 rating-number group-hover:text-pine-900"><?= $i ?></span>
                                             <span class="rating-circle"></span>
                                         </label>
                                     </div>

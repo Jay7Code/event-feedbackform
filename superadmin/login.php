@@ -1,14 +1,14 @@
 <?php
 /**
  * ═══════════════════════════════════════════════════════════════
- * ADMIN LOGIN PAGE
+ * SUPER ADMIN LOGIN PAGE
  * Event Feedback System
  * ═══════════════════════════════════════════════════════════════
  */
 session_start();
 require_once __DIR__ . "/../config.php";
 
-if (isset($_SESSION["admin_logged_in"]) && $_SESSION["admin_logged_in"] === true) {
+if (isset($_SESSION["superadmin_logged_in"]) && $_SESSION["superadmin_logged_in"] === true) {
     header("Location: index.php");
     exit();
 }
@@ -18,34 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
     $password = trim($_POST["password"] ?? "");
 
-    if (empty($username) || empty($password)) {
-        $error = "Please enter both username and password.";
+    if ($username === SUPERADMIN_USERNAME && $password === SUPERADMIN_PASSWORD) {
+        $_SESSION["superadmin_logged_in"] = true;
+        $_SESSION["superadmin_username"] = $username;
+        header("Location: index.php");
+        exit();
     } else {
-        $mysqli = getDBConnection();
-        $stmt = $mysqli->prepare("SELECT id, username, password, is_active FROM admin_users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-            if ($user['is_active'] == 1) {
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION["admin_logged_in"] = true;
-                    $_SESSION["admin_username"] = $user['username'];
-                    $_SESSION["admin_id"] = $user['id'];
-                    header("Location: index.php");
-                    exit();
-                } else {
-                    $error = "Invalid username or password.";
-                }
-            } else {
-                $error = "This account has been deactivated. Please contact the super admin.";
-            }
-        } else {
-            $error = "Invalid username or password.";
-        }
-        $stmt->close();
+        $error = "Invalid superadmin credentials.";
     }
 }
 ?>
@@ -54,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Admin Login - Event Feedback</title>
+    <title>Super Admin Login - Event Feedback</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -81,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body class="font-sans min-h-screen flex items-center justify-center text-white px-4">
     <div class="w-full max-w-md">
         <div class="text-center mb-10">
-            <h1 class="font-serif text-3xl font-bold text-white/90 mb-2">Admin Panel</h1>
+            <h1 class="font-serif text-3xl font-bold text-gold-400 mb-2">Super Admin Space</h1>
             <p class="text-white/40 text-sm">Event Feedback System</p>
         </div>
         <div class="glass-card rounded-2xl p-8">
@@ -95,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <label class="block text-xs font-bold text-gold-400 uppercase tracking-wider mb-2">Username</label>
                     <input type="text" name="username" required
                         class="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/20 transition"
-                        placeholder="Enter username">
+                        placeholder="Enter superadmin username">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gold-400 uppercase tracking-wider mb-2">Password</label>
@@ -106,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button type="submit"
                     class="w-full py-3 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-gold-400/20"
                     style="background:linear-gradient(135deg,#C9A96E,#b5893a);color:#0f1333">
-                    Sign In
+                    Authenticate
                 </button>
             </form>
         </div>

@@ -112,8 +112,11 @@ function avgRating($row) {
                 <p class="text-white/40 text-xs">Admin Dashboard</p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="analytics.php" class="text-sm text-gold-400/70 hover:text-gold-400 transition-colors font-medium">Analytics</a>
-                <a href="logout.php" class="text-sm text-white/40 hover:text-red-400 transition-colors">Logout</a>
+                <a href="index.php" class="text-sm text-gold-400 hover:text-gold-300 transition-colors font-medium border-b border-gold-400 pb-1">Dashboard</a>
+                <a href="analytics.php" class="text-sm text-white/50 hover:text-white transition-colors">Analytics</a>
+                <a href="reports.php" class="text-sm text-white/50 hover:text-white transition-colors">Reports</a>
+                <span class="text-white/20">|</span>
+                <a href="logout.php" class="text-sm text-red-400 hover:text-red-300 transition-colors">Logout</a>
             </div>
         </div>
     </nav>
@@ -182,6 +185,15 @@ function avgRating($row) {
             </div>
         </div>
 
+        <?php
+        $limit = 15;
+        $totalRecords = count($feedbacks);
+        $totalPages = ceil($totalRecords / $limit);
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        if ($page > $totalPages && $totalPages > 0) $page = $totalPages;
+        $offset = ($page - 1) * $limit;
+        $paginatedFeedbacks = array_slice($feedbacks, $offset, $limit);
+        ?>
         <!-- Feedback table -->
         <div class="glass-card rounded-2xl overflow-hidden">
             <div class="px-6 py-4 border-b border-white/[0.06]">
@@ -201,12 +213,12 @@ function avgRating($row) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($feedbacks)): ?>
+                        <?php if (empty($paginatedFeedbacks)): ?>
                             <tr><td colspan="7" class="px-6 py-12 text-center text-white/30">No feedback submissions found.</td></tr>
                         <?php else: ?>
-                            <?php foreach ($feedbacks as $i => $fb): ?>
+                            <?php foreach ($paginatedFeedbacks as $i => $fb): ?>
                                 <tr class="border-b border-white/[0.03] hover:bg-white/[0.03] transition-colors">
-                                    <td class="px-6 py-4 text-white/40"><?= $i + 1 ?></td>
+                                    <td class="px-6 py-4 text-white/40"><?= $offset + $i + 1 ?></td>
                                     <td class="px-6 py-4">
                                         <p class="text-white/80 font-medium"><?= htmlspecialchars($fb["event_name"]) ?></p>
                                         <p class="text-white/30 text-xs"><?= htmlspecialchars($fb["location"]) ?></p>
@@ -241,6 +253,32 @@ function avgRating($row) {
                     </tbody>
                 </table>
             </div>
+            
+            <?php if ($totalPages > 1): ?>
+                <div class="px-6 py-4 border-t border-white/[0.06] flex items-center justify-between">
+                    <p class="text-xs text-white/40">Showing <?= $offset + 1 ?> to <?= min($offset + $limit, $totalRecords) ?> of <?= $totalRecords ?> submissions</p>
+                    <div class="flex gap-2">
+                        <?php
+                        $qs = $_GET;
+                        $qs['page'] = $page - 1;
+                        $prevUrl = '?' . http_build_query($qs);
+                        $qs['page'] = $page + 1;
+                        $nextUrl = '?' . http_build_query($qs);
+                        ?>
+                        <?php if ($page > 1): ?>
+                            <a href="<?= htmlspecialchars($prevUrl) ?>" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-xs font-semibold transition-colors border border-white/10">Prev</a>
+                        <?php else: ?>
+                            <span class="px-3 py-1.5 rounded-lg bg-white/5 text-white/30 text-xs font-semibold border border-white/5 cursor-not-allowed">Prev</span>
+                        <?php endif; ?>
+                        
+                        <?php if ($page < $totalPages): ?>
+                            <a href="<?= htmlspecialchars($nextUrl) ?>" class="px-3 py-1.5 rounded-lg bg-gold-400/10 hover:bg-gold-400/20 text-gold-400 border border-gold-400/20 text-xs font-semibold transition-colors">Next</a>
+                        <?php else: ?>
+                            <span class="px-3 py-1.5 rounded-lg bg-white/5 text-white/30 text-xs font-semibold border border-white/5 cursor-not-allowed">Next</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </main>
 </body>
