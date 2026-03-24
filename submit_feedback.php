@@ -301,8 +301,8 @@ try {
     <div class="corner-decor corner-bl hidden md:block"></div>
 
     <header class="relative z-10 text-center py-10 border-b border-paper-200 bg-white/50 backdrop-blur-md">
-        <h1 class="font-serif text-4xl font-bold text-pine-900 tracking-tight">Event Intelligence</h1>
-        <p class="text-antique-500 text-[0.65rem] font-black uppercase tracking-[0.4em] mt-2">Feedback Manifest</p>
+        <h1 class="font-serif text-4xl font-bold text-pine-900 tracking-tight">John Hay Hotels</h1>
+        <p class="text-antique-500 text-[0.65rem] font-black uppercase tracking-[0.4em] mt-2">Forest Wing</p>
     </header>
 
     <main class="flex-1 flex items-center justify-center px-4 py-16 relative z-10">
@@ -322,7 +322,7 @@ try {
                     </h2>
                     
                     <p class="text-pine-800/80 text-lg leading-relaxed mb-8 fade-up" style="animation-delay: 0.4s">
-                        Your contribution has been successfully cataloged. These insights are vital to our continuous strategic refinement. A confirmation email has been sent to you.
+                        Your contribution has been successfully cataloged. These insights are vital to our continuous strategic refinement.
                     </p>
 
                     <div class="flex items-center justify-center gap-4 mb-8 fade-up" style="animation-delay: 0.5s">
@@ -341,7 +341,7 @@ try {
                 <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                 </svg>
-                Return to Evaluation Index
+                Return to feedback <form action=""></form>
             </a>
         <?php else: ?>
             <div class="glass-card-premium rounded-[2rem] p-12 mb-12 scale-animated">
@@ -358,8 +358,9 @@ try {
         </div>
     </main>
 
-    <footer class="relative z-10 text-center py-12 border-t border-paper-200 bg-white/50 backdrop-blur-md">
-        <p class="text-pine-700/40 text-[0.65rem] font-bold uppercase tracking-[0.5em]">United Performance Systems</p>
+    <footer class="text-center py-10 border-t border-paper-200/50 bg-paper-100/30">
+        <p class="font-serif text-xl text-pine-900 mb-2">John Hay Hotels</p>
+        <p class="text-pine-700/60 text-xs font-medium uppercase tracking-[0.2em]">Forest Wing - Camp John Hay - Baguio City, 2600</p>
     </footer>
 </body>
 </html>

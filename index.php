@@ -378,8 +378,8 @@
 
     <!-- ═══ FOOTER ═══ -->
     <footer class="text-center py-10 border-t border-paper-200/50 bg-paper-100/30">
-        <p class="font-serif text-xl text-pine-900 mb-2">Event Evaluation System</p>
-        <p class="text-pine-700/60 text-xs font-medium uppercase tracking-[0.2em]">Excellence is an Art</p>
+        <p class="font-serif text-xl text-pine-900 mb-2">John Hay Hotels</p>
+        <p class="text-pine-700/60 text-xs font-medium uppercase tracking-[0.2em]">Forest Wing - Camp John Hay - Baguio City, 2600</p>
     </footer>
 
     <!-- ═══ JAVASCRIPT ═══ -->
