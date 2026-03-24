@@ -78,59 +78,123 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
     <title>Analytics - Event Feedback</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: { 800: '#1e2a6e', 900: '#1a2255', 950: '#0f1333' },
-                        gold: { 400: '#C9A96E', 500: '#b5893a' }
+                        pine: {
+                            50: '#f2f7f4', 100: '#e1efe6', 200: '#c4dfcf', 300: '#9bc6b0',
+                            400: '#6ba889', 500: '#488c6b', 600: '#356f53', 700: '#2b5843',
+                            800: '#1b3a2a', 900: '#153A26',
+                        },
+                        antique: { 400: '#D4AF37', 500: '#C0A062', 600: '#9E824A' },
+                        paper: { DEFAULT: '#FCFBFA', 100: '#F5F3ED', 200: '#EAE6DB' }
                     },
                     fontFamily: {
-                        serif: ['"Playfair Display"','serif'],
-                        sans: ['"Inter"','sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'elegant': '0 10px 40px -10px rgba(21, 58, 38, 0.08)',
                     }
                 }
             }
         }
     </script>
+
+    
     <style>
-        body { background: #0f1333; }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        body {
+            background-color: #FCFBFA;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0C17.909 0 0 17.909 0 40c0 22.091 17.909 40 40 40 22.091 0 40-17.909 40-40C80 17.909 62.091 0 40 0zm0 3.2c20.324 0 36.8 16.476 36.8 36.8 0 20.324-16.476 36.8-36.8 36.8-20.324 0-36.8-16.476-36.8-36.8C3.2 19.676 19.676 3.2 40 3.2zm0 14.4c12.371 0 22.4 10.029 22.4 22.4 0 12.371-10.029 22.4-22.4 22.4-12.371 0-22.4-10.029-22.4-22.4 0-12.371 10.029-22.4 22.4-22.4zm0 3.2c-10.604 0-19.2 8.596-19.2 19.2 0 10.604 8.596 19.2 19.2 19.2 10.604 0 19.2-8.596 19.2-19.2 0-10.604-8.596-19.2-19.2-19.2z' fill='%23C0A062' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: #333;
+        }
+        .corner-decor {
+            position: fixed; width: 250px; height: 250px; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='1.5' stroke-opacity='0.3' d='M0,0 C100,0 200,100 200,200'/%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='1' stroke-opacity='0.2' d='M0,20 C80,20 180,120 180,200'/%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='0.5' stroke-opacity='0.15' d='M0,40 C60,40 160,140 160,200'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+        }
+        .corner-tl { top: 0; left: 0; transform: rotate(0deg); }
+        .corner-tr { top: 0; right: 0; transform: rotate(90deg); }
+        .corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
+        .corner-bl { bottom: 0; left: 0; transform: rotate(270deg); }
+
+        .hotel-section {
+            background: #FFFFFF;
+            border: 1px solid #EAE6DB;
+            border-top: 4px solid #153A26;
+            box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.05);
+        }
+        .nav-glass {
+            background: rgba(252, 251, 250, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #EAE6DB;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        
+        
+        .glass-card-premium { background: #FFFFFF; border: 1px solid #EAE6DB; border-top: 4px solid #153A26; box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.05); }
+        
         @keyframes barGrow { from { width: 0; } }
         .bar-animate { animation: barGrow 0.8s ease-out forwards; }
     </style>
 </head>
-<body class="font-sans min-h-screen text-white">
+<body class="font-sans min-h-screen text-pine-900 relative">
+    
+    <!-- Elegant Corner Decor Rings -->
+    <div class="corner-decor corner-tl hidden md:block"></div>
+    <div class="corner-decor corner-tr hidden md:block"></div>
+    <div class="corner-decor corner-br hidden md:block"></div>
+    <div class="corner-decor corner-bl hidden md:block"></div>
+    
+
     <!-- Nav -->
-    <nav class="border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
+    <nav class="nav-glass sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-            <div>
-                <h1 class="font-serif text-xl font-bold text-white/90">Analytics</h1>
-                <p class="text-white/40 text-xs">Event Feedback System</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-antique-400 to-antique-500 flex items-center justify-center shadow-lg shadow-antique-400/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl font-bold text-pine-900 leading-tight">Analytics</h1>
+                    <p class="text-antique-400/60 text-[0.65rem] uppercase tracking-[0.2em] font-bold">Performance Insights</p>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.php" class="text-sm text-white/50 hover:text-white transition-colors">Dashboard</a>
-                <a href="analytics.php" class="text-sm text-gold-400 hover:text-gold-300 transition-colors font-medium border-b border-gold-400 pb-1">Analytics</a>
-                <a href="reports.php" class="text-sm text-white/50 hover:text-white transition-colors">Reports</a>
-                <span class="text-white/20">|</span>
-                <a href="logout.php" class="text-sm text-red-400 hover:text-red-300 transition-colors">Logout</a>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="index.php" class="text-sm text-pine-700/80 hover:text-antique-400 transition-colors font-medium">Dashboard</a>
+                    <a href="analytics.php" class="text-sm text-antique-400 transition-colors font-bold border-b-2 border-antique-400 pb-1">Analytics</a>
+                    <a href="reports.php" class="text-sm text-pine-700/80 hover:text-antique-400 transition-colors font-medium">Reports</a>
+                </div>
+                <span class="text-pine-700/20 hidden md:block">|</span>
+                <a href="logout.php" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-xs font-bold uppercase tracking-wider">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 relative z-10">
         <?php if ($totalCount == 0): ?>
-            <div class="glass-card rounded-2xl p-12 text-center">
-                <p class="text-white/30 text-lg">No feedback data yet. Analytics will appear once submissions are received.</p>
+            <div class="glass-card-premium rounded-3xl p-20 text-center">
+                <div class="w-20 h-20 rounded-full bg-paper-100/50 flex items-center justify-center mx-auto mb-6 border border-paper-200">
+                    <svg class="w-10 h-10 text-pine-700/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <h3 class="font-serif text-2xl text-pine-800 mb-2">No Data Available</h3>
+                <p class="text-pine-700/60 text-sm max-w-sm mx-auto">Analytics will automatically appear once you start receiving feedback submissions.</p>
             </div>
         <?php else: ?>
 
         <!-- Top stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="glass-card rounded-xl p-5 text-center">
-                <p class="text-3xl font-bold text-gold-400"><?= $totalCount ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Total Responses</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-antique-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
+                <p class="text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest mb-2">Total Responses</p>
+                <p class="text-4xl font-serif font-bold text-pine-900"><?= $totalCount ?></p>
             </div>
             <?php
             $grandAvg = 0; $cnt = 0;
@@ -139,42 +203,48 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
             }
             $grandAvg = $cnt > 0 ? round($grandAvg / $cnt, 1) : 0;
             ?>
-            <div class="glass-card rounded-xl p-5 text-center">
-                <p class="text-3xl font-bold <?= $grandAvg >= 4 ? 'text-green-400' : ($grandAvg >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $grandAvg ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Grand Average</p>
+            <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-antique-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
+                <p class="text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest mb-2">Grand Average</p>
+                <div class="flex items-end gap-2">
+                    <p class="text-4xl font-serif font-bold <?= $grandAvg >= 4 ? 'text-emerald-400' : ($grandAvg >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $grandAvg ?></p>
+                    <p class="text-pine-700/40 text-sm font-bold mb-1">/ 5.0</p>
+                </div>
             </div>
-            <div class="glass-card rounded-xl p-5 text-center">
-                <p class="text-3xl font-bold text-green-400"><?= $participation["Yes"] ?? 0 ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Would Return</p>
+            <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
+                <p class="text-[0.65rem] font-bold text-emerald-400/60 uppercase tracking-widest mb-2">Would Return</p>
+                <p class="text-4xl font-serif font-bold text-emerald-400"><?= $participation["Yes"] ?? 0 ?></p>
             </div>
-            <div class="glass-card rounded-xl p-5 text-center">
+            <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-antique-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
                 <?php
                 $best = ""; $bestVal = 0;
                 foreach (array_keys($ratingCategories) as $k) {
                     if (floatval($avgs["avg_$k"]) > $bestVal) { $bestVal = floatval($avgs["avg_$k"]); $best = $ratingCategories[$k]; }
                 }
                 ?>
-                <p class="text-lg font-bold text-gold-400 leading-tight"><?= $best ?></p>
-                <p class="text-xs text-white/40 uppercase tracking-wider mt-1">Top Category</p>
+                <p class="text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest mb-2">Top Category</p>
+                <p class="text-lg font-serif font-bold text-pine-900 truncate"><?= $best ?></p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Category Averages -->
-            <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="px-6 py-4 border-b border-white/[0.06]">
-                    <h2 class="font-serif text-lg text-white/80">Average by Category</h2>
+            <div class="glass-card-premium rounded-3xl overflow-hidden">
+                <div class="px-8 py-5 border-b border-paper-200 bg-paper-100/30">
+                    <h2 class="font-serif text-xl font-bold text-pine-900">Average by Category</h2>
                 </div>
-                <div class="px-6 py-5 space-y-4">
+                <div class="px-8 py-8 space-y-6">
                     <?php foreach ($ratingCategories as $key => $label): ?>
                         <?php $val = floatval($avgs["avg_$key"] ?? 0); $pct = ($val / 5) * 100; ?>
                         <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm text-white/60"><?= $label ?></span>
-                                <span class="text-sm font-bold <?= $val >= 4 ? 'text-green-400' : ($val >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= number_format($val, 1) ?></span>
+                            <div class="flex justify-between mb-2 items-end">
+                                <span class="text-xs font-bold text-pine-700 uppercase tracking-wider"><?= $label ?></span>
+                                <span class="text-sm font-black <?= $val >= 4 ? 'text-emerald-400' : ($val >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= number_format($val, 1) ?></span>
                             </div>
-                            <div class="w-full h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
-                                <div class="h-full rounded-full bar-animate <?= $val >= 4 ? 'bg-green-400' : ($val >= 3 ? 'bg-yellow-400' : 'bg-red-400') ?>"
+                            <div class="w-full h-2 bg-paper-100/30 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full bar-animate <?= $val >= 4 ? 'bg-emerald-400' : ($val >= 3 ? 'bg-yellow-400' : 'bg-red-400') ?>"
                                      style="width:<?= $pct ?>%; animation-delay:<?= array_search($key, array_keys($ratingCategories)) * 0.1 ?>s"></div>
                             </div>
                         </div>
@@ -183,20 +253,20 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <!-- Rating Distribution -->
-            <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="px-6 py-4 border-b border-white/[0.06]">
-                    <h2 class="font-serif text-lg text-white/80">Rating Distribution</h2>
+            <div class="glass-card-premium rounded-3xl overflow-hidden flex flex-col">
+                <div class="px-8 py-5 border-b border-paper-200 bg-paper-100/30">
+                    <h2 class="font-serif text-xl font-bold text-pine-900">Rating Distribution</h2>
                 </div>
-                <div class="px-6 py-5 space-y-3">
+                <div class="px-8 py-8 flex-1 space-y-4">
                     <?php for ($i = 5; $i >= 1; $i--): ?>
                         <?php $cnt = $distribution[$i]; $pct = ($cnt / $maxDist) * 100; ?>
-                        <div class="flex items-center gap-3">
-                            <span class="w-4 text-sm text-gold-400 font-bold text-right"><?= $i ?></span>
-                            <div class="flex-1 h-6 bg-white/[0.04] rounded-lg overflow-hidden">
-                                <div class="h-full rounded-lg bar-animate flex items-center px-2"
-                                     style="width:<?= max($pct, 2) ?>%;background:linear-gradient(90deg,rgba(201,169,110,0.6),rgba(201,169,110,0.3));animation-delay:<?= (5 - $i) * 0.1 ?>s">
+                        <div class="flex items-center gap-4">
+                            <span class="w-4 text-xs text-antique-400 font-bold text-right"><?= $i ?></span>
+                            <div class="flex-1 h-7 bg-paper-100/30 rounded-xl overflow-hidden relative">
+                                <div class="h-full rounded-xl bar-animate flex items-center px-3"
+                                     style="width:<?= max($pct, 4) ?>%;background:linear-gradient(90deg,rgba(201,169,110,0.4),rgba(201,169,110,0.1));animation-delay:<?= (5 - $i) * 0.1 ?>s">
                                     <?php if ($cnt > 0): ?>
-                                        <span class="text-xs font-bold text-white/80"><?= $cnt ?></span>
+                                        <span class="text-[0.65rem] font-black text-pine-900"><?= $cnt ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -204,21 +274,22 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
                     <?php endfor; ?>
                 </div>
 
-                <!-- Participation pie (simple text breakdown) -->
-                <div class="px-6 py-5 border-t border-white/[0.06]">
-                    <h3 class="text-sm font-bold text-gold-400 uppercase tracking-wider mb-4">Future Participation</h3>
-                    <div class="flex gap-4 justify-center">
+                <!-- Participation breakdown -->
+                <div class="px-8 py-6 border-t border-paper-200 bg-paper-100/30">
+                    <h3 class="text-[0.65rem] font-bold text-antique-400 uppercase tracking-widest mb-6 text-center">Future Participation Intent</h3>
+                    <div class="flex gap-8 justify-center">
                         <?php
-                        $partColors = ['Yes' => 'bg-green-500', 'No' => 'bg-red-500', 'Maybe' => 'bg-yellow-500'];
+                        $partColors = ['Yes' => 'emerald', 'No' => 'red', 'Maybe' => 'yellow'];
                         foreach (['Yes', 'No', 'Maybe'] as $opt):
                             $cnt = $participation[$opt] ?? 0;
                             $pctPart = $totalCount > 0 ? round(($cnt / $totalCount) * 100) : 0;
+                            $color = $partColors[$opt];
                         ?>
-                            <div class="text-center">
-                                <div class="w-14 h-14 rounded-full <?= $partColors[$opt] ?>/10 flex items-center justify-center mx-auto mb-2">
-                                    <span class="text-lg font-bold <?= str_replace('bg-', 'text-', $partColors[$opt]) ?>/80"><?= $pctPart ?>%</span>
+                            <div class="text-center group">
+                                <div class="w-16 h-16 rounded-2xl bg-<?= $color ?>-500/5 group-hover:bg-<?= $color ?>-500/10 border border-<?= $color ?>-500/10 group-hover:border-<?= $color ?>-500/20 flex flex-col items-center justify-center mx-auto mb-2 transition-all duration-300">
+                                    <span class="text-lg font-black text-<?= $color ?>-400"><?= $pctPart ?><span class="text-[0.6rem] opacity-40">%</span></span>
                                 </div>
-                                <p class="text-xs text-white/40"><?= $opt ?></p>
+                                <p class="text-[0.6rem] font-bold uppercase tracking-widest text-pine-700/60"><?= $opt ?></p>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -227,33 +298,35 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <!-- Recent submissions -->
-        <div class="glass-card rounded-2xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/[0.06]">
-                <h2 class="font-serif text-lg text-white/80">Recent Submissions</h2>
+        <div class="glass-card-premium rounded-3xl overflow-hidden">
+            <div class="px-8 py-5 border-b border-paper-200 bg-paper-100/30">
+                <h2 class="font-serif text-xl font-bold text-pine-900">Recent Feedback Activity</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-white/[0.06]">
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Event</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Attendee</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gold-400 uppercase tracking-wider">Overall</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gold-400 uppercase tracking-wider">Submitted</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gold-400 uppercase tracking-wider">Action</th>
+                        <tr class="bg-paper-100/30">
+                            <th class="px-8 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Event</th>
+                            <th class="px-8 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Attendee</th>
+                            <th class="px-8 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Overall</th>
+                            <th class="px-8 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Timestamp</th>
+                            <th class="px-8 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-paper-200">
                         <?php foreach ($recent as $r): ?>
-                            <tr class="border-b border-white/[0.03] hover:bg-white/[0.03] transition-colors">
-                                <td class="px-6 py-3 text-white/80"><?= htmlspecialchars($r["event_name"]) ?></td>
-                                <td class="px-6 py-3 text-white/60"><?= htmlspecialchars($r["attendee_name"]) ?></td>
-                                <td class="px-6 py-3 text-center">
+                            <tr class="hover:bg-paper-100/30 transition-colors group">
+                                <td class="px-8 py-4 text-pine-800 font-bold"><?= htmlspecialchars($r["event_name"]) ?></td>
+                                <td class="px-8 py-4 text-pine-700/80"><?= htmlspecialchars($r["attendee_name"]) ?></td>
+                                <td class="px-8 py-4 text-center">
                                     <?php $oe = intval($r["overall_experience"]); ?>
-                                    <span class="font-bold <?= $oe >= 4 ? 'text-green-400' : ($oe >= 3 ? 'text-yellow-400' : 'text-red-400') ?>"><?= $oe ?>/5</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-lg text-[0.7rem] font-black border <?= $oe >= 4 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : ($oe >= 3 ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20') ?>">
+                                        <?= $oe ?>/5
+                                    </span>
                                 </td>
-                                <td class="px-6 py-3 text-white/40 text-xs"><?= date("M d, Y g:i A", strtotime($r["created_at"])) ?></td>
-                                <td class="px-6 py-3 text-center">
-                                    <a href="view.php?id=<?= $r["id"] ?>" class="text-gold-400/70 hover:text-gold-400 text-xs font-semibold uppercase tracking-wider">View</a>
+                                <td class="px-8 py-4 text-pine-700/60 text-[0.7rem] font-medium"><?= date("M d, Y • g:i A", strtotime($r["created_at"])) ?></td>
+                                <td class="px-8 py-4 text-center">
+                                    <a href="view.php?id=<?= $r["id"] ?>" class="text-[0.65rem] font-bold text-antique-400/60 hover:text-antique-400 uppercase tracking-widest transition-colors">Details</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -266,3 +339,4 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
     </main>
 </body>
 </html>
+

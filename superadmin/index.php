@@ -19,116 +19,188 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
     <title>Super Admin - Event Feedback System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: { 800: '#1e2a6e', 900: '#1a2255', 950: '#0f1333' },
-                        gold: { 400: '#C9A96E', 500: '#b5893a' }
+                        pine: {
+                            50: '#f2f7f4', 100: '#e1efe6', 200: '#c4dfcf', 300: '#9bc6b0',
+                            400: '#6ba889', 500: '#488c6b', 600: '#356f53', 700: '#2b5843',
+                            800: '#1b3a2a', 900: '#153A26',
+                        },
+                        antique: { 400: '#D4AF37', 500: '#C0A062', 600: '#9E824A' },
+                        paper: { DEFAULT: '#FCFBFA', 100: '#F5F3ED', 200: '#EAE6DB' }
                     },
                     fontFamily: {
                         serif: ['"Playfair Display"', 'serif'],
                         sans: ['"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'elegant': '0 10px 40px -10px rgba(21, 58, 38, 0.08)',
                     }
                 }
             }
         }
     </script>
+
+    
     <style>
-        body { background: #0f1333; }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        .lodge-input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: all 0.3s ease; outline: none; }
-        .lodge-input::placeholder { color: rgba(255,255,255,0.3); }
-        .lodge-input:focus { border-color: #C9A96E; background: rgba(255,255,255,0.1); box-shadow: 0 0 0 3px rgba(201,169,110,0.15); }
+        body {
+            background-color: #FCFBFA;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0C17.909 0 0 17.909 0 40c0 22.091 17.909 40 40 40 22.091 0 40-17.909 40-40C80 17.909 62.091 0 40 0zm0 3.2c20.324 0 36.8 16.476 36.8 36.8 0 20.324-16.476 36.8-36.8 36.8-20.324 0-36.8-16.476-36.8-36.8C3.2 19.676 19.676 3.2 40 3.2zm0 14.4c12.371 0 22.4 10.029 22.4 22.4 0 12.371-10.029 22.4-22.4 22.4-12.371 0-22.4-10.029-22.4-22.4 0-12.371 10.029-22.4 22.4-22.4zm0 3.2c-10.604 0-19.2 8.596-19.2 19.2 0 10.604 8.596 19.2 19.2 19.2 10.604 0 19.2-8.596 19.2-19.2 0-10.604-8.596-19.2-19.2-19.2z' fill='%23C0A062' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: #333;
+        }
+        .corner-decor {
+            position: fixed; width: 250px; height: 250px; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='1.5' stroke-opacity='0.3' d='M0,0 C100,0 200,100 200,200'/%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='1' stroke-opacity='0.2' d='M0,20 C80,20 180,120 180,200'/%3E%3Cpath fill='none' stroke='%23C0A062' stroke-width='0.5' stroke-opacity='0.15' d='M0,40 C60,40 160,140 160,200'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+        }
+        .corner-tl { top: 0; left: 0; transform: rotate(0deg); }
+        .corner-tr { top: 0; right: 0; transform: rotate(90deg); }
+        .corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
+        .corner-bl { bottom: 0; left: 0; transform: rotate(270deg); }
+
+        .hotel-section {
+            background: #FFFFFF;
+            border: 1px solid #EAE6DB;
+            border-top: 4px solid #153A26;
+            box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.05);
+        }
+        .nav-glass {
+            background: rgba(252, 251, 250, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #EAE6DB;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
         
-        .modal-backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; }
+        
+        .glass-card-premium { background: #FFFFFF; border: 1px solid #EAE6DB; border-top: 4px solid #153A26; box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.05); }
+        
+        .lodge-input { width: 100%; padding: 12px 16px; border-radius: 4px; border: 1px solid #EAE6DB; background: transparent; color: #153A26; font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: border-color 0.3s ease; outline: none; }
+        .lodge-input::placeholder { color: #A8A39C; font-style: italic; }
+        .lodge-input:focus { border-color: #153A26; background: #fff; box-shadow: 0 2px 8px rgba(21,58,38,0.05); }
+        .lodge-input::placeholder { color: rgba(255, 255, 255, 0.2); }
+        .lodge-input:focus { border-color: #C9A96E; background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.1); }
+        
+        .modal-backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(21, 58, 38, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; }
         .modal-backdrop.show { display: flex; }
-        .modal-content { background: #161c40; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.6); width: 100%; max-width: 460px; padding: 32px; }
+        .modal-content { background: #FFFFFF; border: 1px solid #EAE6DB; border-top: 4px solid #153A26; border-radius: 12px; box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.15); width: 100%; max-width: 480px; padding: 40px; transform: translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-backdrop.show .modal-content { background: #FFFFFF; border: 1px solid #EAE6DB; border-top: 4px solid #153A26; border-radius: 12px; box-shadow: 0 10px 40px -10px rgba(21, 58, 38, 0.15); width: 100%; max-width: 480px; padding: 40px; transform: translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-        .fade-up { opacity: 0; animation: fadeUp 0.5s ease-out forwards; }
+        .fade-up { opacity: 0; animation: fadeUp 0.6s ease-out forwards; }
         
-        .badge-active { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
-        .badge-inactive { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-        .btn-action { padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; }
-        .btn-activate { background: rgba(16,185,129,0.1); color: #10b981; border-color: rgba(16,185,129,0.3); }
-        .btn-activate:hover { background: rgba(16,185,129,0.2); }
-        .btn-deactivate { background: rgba(239,68,68,0.1); color: #ef4444; border-color: rgba(239,68,68,0.3); }
-        .btn-deactivate:hover { background: rgba(239,68,68,0.2); }
-        .btn-reset { background: rgba(201,169,110,0.1); color: #C9A96E; border-color: rgba(201,169,110,0.3); }
-        .btn-reset:hover { background: rgba(201,169,110,0.2); }
+        .badge-active { background: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
+        .badge-inactive { background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+        .btn-action { padding: 8px 14px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; }
+        .btn-activate { background: rgba(52, 211, 153, 0.05); color: #34d399; border-color: rgba(52, 211, 153, 0.2); }
+        .btn-activate:hover { background: rgba(52, 211, 153, 0.1); transform: translateY(-1px); }
+        .btn-deactivate { background: rgba(248, 113, 113, 0.05); color: #f87171; border-color: rgba(248, 113, 113, 0.2); }
+        .btn-deactivate:hover { background: rgba(248, 113, 113, 0.1); transform: translateY(-1px); }
+        .btn-reset { background: rgba(201, 169, 110, 0.05); color: #C9A96E; border-color: rgba(201, 169, 110, 0.2); }
+        .btn-reset:hover { background: rgba(201, 169, 110, 0.1); transform: translateY(-1px); }
         
-        .toast { position: fixed; bottom: 24px; right: 24px; z-index: 100; padding: 14px 24px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; transform: translateY(100px); opacity: 0; transition: all 0.4s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .toast { position: fixed; bottom: 32px; right: 32px; z-index: 1000; padding: 16px 28px; border-radius: 16px; font-size: 0.85rem; font-weight: 600; transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
         .toast.show { transform: translateY(0); opacity: 1; }
-        .toast-success { background: #10b981; color: #fff; }
-        .toast-error { background: #ef4444; color: #fff; }
+        .toast-success { background: rgba(52, 211, 153, 0.9); border: 1px solid rgba(255,255,255,0.2); color: #064e3b; }
+        .toast-error { background: rgba(248, 113, 113, 0.9); border: 1px solid rgba(255,255,255,0.2); color: #7f1d1d; }
     </style>
 </head>
-<body class="font-sans text-white min-h-screen">
+<body class="font-sans text-pine-900 min-h-screen relative overflow-x-hidden">
+    
+    <!-- Elegant Corner Decor Rings -->
+    <div class="corner-decor corner-tl hidden md:block"></div>
+    <div class="corner-decor corner-tr hidden md:block"></div>
+    <div class="corner-decor corner-br hidden md:block"></div>
+    <div class="corner-decor corner-bl hidden md:block"></div>
+    
+
     <!-- Nav -->
-    <nav class="border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-40">
+    <nav class="nav-glass sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-            <div>
-                <h1 class="font-serif text-xl font-bold text-gold-400">Super Admin Panel</h1>
-                <p class="text-white/40 text-[0.65rem] uppercase tracking-widest">Event Feedback System</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-antique-400 to-antique-500 flex items-center justify-center shadow-lg shadow-antique-400/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl font-bold text-pine-900 leading-tight">Super Admin Panel</h1>
+                    <p class="text-antique-400/60 text-[0.65rem] uppercase tracking-[0.2em] font-black">Authorized Operations</p>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.php" class="text-sm text-gold-400 hover:text-gold-300 transition-colors font-medium border-b border-gold-400 pb-1">Manage Admins</a>
-                <a href="analytics.php" class="text-sm text-white/50 hover:text-white transition-colors">Analytics</a>
-                <a href="reports.php" class="text-sm text-white/50 hover:text-white transition-colors">Reports</a>
-                <span class="text-white/20">|</span>
-                <a href="logout.php" class="text-sm text-red-400 hover:text-red-300 transition-colors">Logout</a>
+            <div class="flex items-center gap-6">
+                <a href="index.php" class="text-xs font-black uppercase tracking-widest text-antique-400 border-b-2 border-antique-400 pb-1">Manage Admins</a>
+                <a href="analytics.php" class="text-xs font-black uppercase tracking-widest text-pine-700/70 hover:text-pine-900 transition-colors">Analytics</a>
+                <a href="reports.php" class="text-xs font-black uppercase tracking-widest text-pine-700/70 hover:text-pine-900 transition-colors">Reports</a>
+                <span class="text-pine-700/20">|</span>
+                <a href="logout.php" class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-[0.65rem] font-bold uppercase tracking-widest">Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto px-6 py-10">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-8 fade-up">
+    <div class="max-w-6xl mx-auto px-6 py-12 relative z-10">
+        <div class="flex flex-wrap items-center justify-between gap-6 mb-12 fade-up">
             <div>
-                <h2 class="font-serif text-2xl text-white/90 tracking-wide">Admin Account Management</h2>
-                <p class="text-white/40 text-sm mt-1">Create, activate, and deactivate administrator accounts</p>
+                <h2 class="font-serif text-3xl font-bold text-pine-900 tracking-tight">Access Control & Identity</h2>
+                <p class="text-pine-700/70 text-sm mt-1">Manage secondary administrator privileges and session integrity</p>
             </div>
-            <button onclick="openCreateModal()" class="px-6 py-3 rounded-xl font-semibold text-sm uppercase tracking-wider flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-gold-400/20 hover:-translate-y-0.5" style="background:linear-gradient(135deg,#C9A96E,#b5893a);color:#0f1333">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                Create New Admin
+            <button onclick="openCreateModal()" class="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-antique-400/20 hover:scale-[1.02] active:scale-[0.98] text-white" style="background:linear-gradient(135deg,#C9A96E,#b5893a)">
+                <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                Provision New Admin
             </button>
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8 fade-up" style="animation-delay:0.1s">
-            <div class="glass-card rounded-xl p-5 border-l-4 border-l-gold-400">
-                <div class="flex items-center gap-3 mb-3">
-                    <span class="text-[0.65rem] font-bold text-gold-400 uppercase tracking-[0.15em]">Total Admins</span>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 fade-up" style="animation-delay:0.1s">
+            <div class="glass-card-premium rounded-[2rem] p-8 group hover:border-antique-400/40 transition-all duration-500">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Total Workforce</span>
+                    <div class="w-10 h-10 rounded-xl bg-paper-100/50 flex items-center justify-center text-antique-400/40 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
                 </div>
-                <p class="text-3xl font-bold text-white/90" id="statTotal">-</p>
+                <p class="text-4xl font-serif font-bold text-pine-900" id="statTotal">-</p>
+                <div class="mt-4 h-1 w-12 bg-antique-400/20 rounded-full"></div>
             </div>
-            <div class="glass-card rounded-xl p-5 border-l-4 border-l-emerald-400">
-                <div class="flex items-center gap-3 mb-3">
-                    <span class="text-[0.65rem] font-bold text-emerald-400 uppercase tracking-[0.15em]">Active</span>
+            <div class="glass-card-premium rounded-[2rem] p-8 group hover:border-emerald-400/40 transition-all duration-500">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[0.65rem] font-black text-emerald-400/60 uppercase tracking-[0.2em]">Active Duty</span>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-400/5 flex items-center justify-center text-emerald-400/40 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
                 </div>
-                <p class="text-3xl font-bold text-emerald-400" id="statActive">-</p>
+                <p class="text-4xl font-serif font-bold text-emerald-400" id="statActive">-</p>
+                <div class="mt-4 h-1 w-12 bg-emerald-400/20 rounded-full"></div>
             </div>
-            <div class="glass-card rounded-xl p-5 border-l-4 border-l-red-400">
-                <div class="flex items-center gap-3 mb-3">
-                    <span class="text-[0.65rem] font-bold text-red-400 uppercase tracking-[0.15em]">Deactivated</span>
+            <div class="glass-card-premium rounded-[2rem] p-8 group hover:border-red-400/40 transition-all duration-500">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[0.65rem] font-black text-red-400/60 uppercase tracking-[0.2em]">Suspended</span>
+                    <div class="w-10 h-10 rounded-xl bg-red-400/5 flex items-center justify-center text-red-400/40 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                    </div>
                 </div>
-                <p class="text-3xl font-bold text-red-400" id="statInactive">-</p>
+                <p class="text-4xl font-serif font-bold text-red-400" id="statInactive">-</p>
+                <div class="mt-4 h-1 w-12 bg-red-400/20 rounded-full"></div>
             </div>
         </div>
 
         <!-- Table -->
-        <div class="glass-card rounded-2xl overflow-hidden fade-up" style="animation-delay:0.2s">
-            <div class="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between">
-                <h3 class="font-serif text-white/80 text-lg tracking-wide">Administrator Accounts</h3>
-                <button onclick="loadAdmins()" class="text-gold-400/60 hover:text-gold-400 transition-colors text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                    Refresh
+        <div class="glass-card-premium rounded-[2.5rem] overflow-hidden fade-up" style="animation-delay:0.2s">
+            <div class="px-10 py-8 border-b border-paper-200 bg-paper-100/30 flex items-center justify-between">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-pine-900">Identity Repository</h3>
+                    <p class="text-pine-700/60 text-[0.65rem] uppercase tracking-widest mt-1 font-bold">Encrypted administrative credentials</p>
+                </div>
+                <button onclick="loadAdmins()" class="w-10 h-10 rounded-xl bg-paper-100/50 border border-paper-200 flex items-center justify-center text-antique-400/40 hover:text-antique-400 hover:bg-paper-100/50 transition-all hover:rotate-180 duration-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 </button>
             </div>
             <div id="adminTableContainer">
-                <div class="px-6 py-16 text-center">
-                    <p class="text-white/40 text-sm animate-pulse">Loading admin accounts...</p>
+                <div class="px-10 py-24 text-center">
+                    <div class="inline-block w-8 h-8 border-2 border-antique-400/20 border-t-antique-400 rounded-full animate-spin mb-4"></div>
+                    <p class="text-pine-700/70 text-xs font-black uppercase tracking-[0.2em]">Synchronizing Registry...</p>
                 </div>
             </div>
         </div>
@@ -138,25 +210,25 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
     <div class="modal-backdrop" id="createModal">
         <div class="modal-content">
             <div class="flex items-center justify-between mb-6">
-                <h3 class="font-serif text-xl text-white tracking-wide">Create New Admin</h3>
-                <button onclick="closeCreateModal()" class="text-white/30 hover:text-white/60"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <h3 class="font-serif text-xl text-pine-900 tracking-wide">Create New Admin</h3>
+                <button onclick="closeCreateModal()" class="text-pine-700/60 hover:text-pine-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form id="createAdminForm" class="space-y-4">
                 <div>
-                    <label class="block text-[0.65rem] font-bold text-gold-400 uppercase tracking-[0.15em] mb-2">Full Name</label>
+                    <label class="block text-[0.65rem] font-bold text-antique-400 uppercase tracking-[0.15em] mb-2">Full Name</label>
                     <input type="text" id="newFullName" placeholder="e.g. John Doe" class="lodge-input">
                 </div>
                 <div>
-                    <label class="block text-[0.65rem] font-bold text-gold-400 uppercase tracking-[0.15em] mb-2">Username *</label>
+                    <label class="block text-[0.65rem] font-bold text-antique-400 uppercase tracking-[0.15em] mb-2">Username *</label>
                     <input type="text" id="newUsername" required placeholder="e.g. johndoe" class="lodge-input">
                 </div>
                 <div>
-                    <label class="block text-[0.65rem] font-bold text-gold-400 uppercase tracking-[0.15em] mb-2">Password *</label>
+                    <label class="block text-[0.65rem] font-bold text-antique-400 uppercase tracking-[0.15em] mb-2">Password *</label>
                     <input type="password" id="newPassword" required placeholder="Min. 6 characters" class="lodge-input">
                 </div>
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="closeCreateModal()" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider border border-white/10 text-white/50 hover:bg-white/5 hover:text-white transition-all">Cancel</button>
-                    <button type="submit" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:shadow-lg" style="background:linear-gradient(135deg,#C9A96E,#b5893a);color:#0f1333">Create Admin</button>
+                    <button type="button" onclick="closeCreateModal()" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider border border-paper-200 text-pine-700/80 hover:bg-paper-100/50 hover:text-pine-900 transition-all">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:shadow-lg" style="background:#153A26;color:#ffffff">Create Admin</button>
                 </div>
             </form>
         </div>
@@ -167,20 +239,20 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
         <div class="modal-content">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h3 class="font-serif text-xl text-white tracking-wide">Reset Password</h3>
-                    <p class="text-gold-400/80 text-xs mt-1" id="resetAdminLabel"></p>
+                    <h3 class="font-serif text-xl text-pine-900 tracking-wide">Reset Password</h3>
+                    <p class="text-antique-400/80 text-xs mt-1" id="resetAdminLabel"></p>
                 </div>
-                <button onclick="closeResetModal()" class="text-white/30 hover:text-white/60"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <button onclick="closeResetModal()" class="text-pine-700/60 hover:text-pine-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form id="resetPasswordForm" class="space-y-4">
                 <input type="hidden" id="resetAdminId">
                 <div>
-                    <label class="block text-[0.65rem] font-bold text-gold-400 uppercase tracking-[0.15em] mb-2">New Password *</label>
+                    <label class="block text-[0.65rem] font-bold text-antique-400 uppercase tracking-[0.15em] mb-2">New Password *</label>
                     <input type="password" id="resetNewPassword" required placeholder="Min. 6 characters" class="lodge-input">
                 </div>
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="closeResetModal()" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider border border-white/10 text-white/50 hover:bg-white/5 transition-all">Cancel</button>
-                    <button type="submit" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300" style="background:linear-gradient(135deg,#C9A96E,#b5893a);color:#0f1333">Reset</button>
+                    <button type="button" onclick="closeResetModal()" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider border border-paper-200 text-pine-700/80 hover:bg-paper-100/50 transition-all">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300" style="background:#153A26;color:#ffffff">Reset</button>
                 </div>
             </form>
         </div>
@@ -217,34 +289,34 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
             
             const c = document.getElementById('adminTableContainer');
             if (admins.length === 0) {
-                c.innerHTML = '<div class="px-6 py-16 text-center"><p class="text-white/40 text-sm">No admin accounts found.</p></div>';
+                c.innerHTML = '<div class="px-10 py-24 text-center"><p class="text-pine-700/60 text-xs font-bold uppercase tracking-widest">No administrative records found.</p></div>';
                 return;
             }
             
-            let h = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b border-white/[0.08]"><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-gold-400 uppercase tracking-widest">Administrator</th><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-gold-400 uppercase tracking-widest">Username</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-gold-400 uppercase tracking-widest">Status</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-gold-400 uppercase tracking-widest">Created</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-gold-400 uppercase tracking-widest">Actions</th></tr></thead><tbody>';
+            let h = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-paper-100/30 border-b border-paper-200"><th class="px-10 py-5 text-left text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Operator Profile</th><th class="px-10 py-5 text-left text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Credential ID</th><th class="px-10 py-5 text-center text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Status</th><th class="px-10 py-5 text-center text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Provisioned</th><th class="px-10 py-5 text-center text-[0.65rem] font-black text-antique-400/60 uppercase tracking-[0.2em]">Operations</th></tr></thead><tbody class="divide-y divide-paper-200">';
             
             admins.forEach(x => {
                 const act = x.is_active == 1;
                 const bc = act ? 'badge-active' : 'badge-inactive';
-                const bt = act ? 'Active' : 'Deactivated';
+                const bt = act ? 'Active' : 'Suspended';
                 const tbc = act ? 'btn-deactivate' : 'btn-activate';
-                const tbt = act ? 'Deactivate' : 'Activate';
+                const tbt = act ? 'Suspend' : 'Reinstate';
                 const date = x.created_at ? new Date(x.created_at).toLocaleDateString() : 'N/A';
                 
-                h += `<tr class="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold" style="background:rgba(201,169,110,0.1);color:#C9A96E">${escapeHtml(x.full_name || x.username).charAt(0).toUpperCase()}</div>
-                            <span class="text-white/80 font-medium">${escapeHtml(x.full_name || '-')}</span>
+                h += `<tr class="hover:bg-paper-100/30 transition-all group">
+                    <td class="px-10 py-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black shadow-inner" style="background:rgba(201,169,110,0.05);color:#C9A96E">${escapeHtml(x.full_name || x.username).charAt(0).toUpperCase()}</div>
+                            <span class="text-pine-900 font-bold tracking-tight">${escapeHtml(x.full_name || '-')}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4"><span class="text-white/50 font-mono text-sm">${escapeHtml(x.username)}</span></td>
-                    <td class="px-6 py-4 text-center"><span class="inline-block px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-wider ${bc}">${bt}</span></td>
-                    <td class="px-6 py-4 text-center text-white/40 text-xs">${date}</td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex items-center justify-center gap-2">
+                    <td class="px-10 py-6"><span class="text-pine-700/70 font-mono text-xs font-bold">${escapeHtml(x.username)}</span></td>
+                    <td class="px-10 py-6 text-center"><span class="inline-flex px-4 py-1.5 rounded-xl text-[0.6rem] font-black uppercase tracking-widest ${bc}">${bt}</span></td>
+                    <td class="px-10 py-6 text-center text-pine-700/60 text-[0.65rem] font-bold">${date}</td>
+                    <td class="px-10 py-6 text-center">
+                        <div class="flex items-center justify-center gap-3">
                             <button onclick="toggleAdmin(${x.id})" class="btn-action ${tbc}">${tbt}</button>
-                            <button onclick="openResetModal(${x.id}, '${escapeHtml(x.username)}')" class="btn-action btn-reset">Reset Password</button>
+                            <button onclick="openResetModal(${x.id}, '${escapeHtml(x.username)}')" class="btn-action btn-reset">Reset Key</button>
                         </div>
                     </td>
                 </tr>`;
@@ -254,7 +326,7 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
         }
 
         window.toggleAdmin = function(id) {
-            if(!confirm('Are you sure you want to change this admin\'s status?')) return;
+            if(!confirm('Authorized: Proceed with status modification?')) return;
             const fd = new FormData();
             fd.append('action', 'toggle_status');
             fd.append('admin_id', id);
@@ -263,7 +335,7 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
                     if (d.error) return showToast(d.error, 'error');
                     showToast(d.message, 'success');
                     loadAdmins();
-                }).catch(() => showToast('Failed to update.', 'error'));
+                }).catch(() => showToast('Inquiry Failed.', 'error'));
         };
 
         window.openCreateModal = () => {
@@ -278,7 +350,7 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
                   p = document.getElementById('newPassword').value.trim(),
                   n = document.getElementById('newFullName').value.trim();
                   
-            if(p.length < 6) return showToast('Password must be at least 6 characters.', 'error');
+            if(p.length < 6) return showToast('Entropy required: Password min 6 characters.', 'error');
             
             const fd = new FormData();
             fd.append('action', 'create');
@@ -292,13 +364,13 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
                     showToast(d.message, 'success');
                     closeCreateModal();
                     loadAdmins();
-                }).catch(() => showToast('Failed to create admin.', 'error'));
+                }).catch(() => showToast('Creation Fault.', 'error'));
         });
 
         window.openResetModal = (id, un) => {
             document.getElementById('resetModal').classList.add('show');
             document.getElementById('resetAdminId').value = id;
-            document.getElementById('resetAdminLabel').textContent = 'For: ' + un;
+            document.getElementById('resetAdminLabel').textContent = 'Identity: ' + un;
             document.getElementById('resetNewPassword').value = '';
         };
         window.closeResetModal = () => document.getElementById('resetModal').classList.remove('show');
@@ -308,7 +380,7 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
             const id = document.getElementById('resetAdminId').value,
                   p = document.getElementById('resetNewPassword').value.trim();
                   
-            if(p.length < 6) return showToast('Password must be at least 6 characters.', 'error');
+            if(p.length < 6) return showToast('Entropy required: Password min 6 characters.', 'error');
             
             const fd = new FormData();
             fd.append('action', 'reset_password');
@@ -320,10 +392,70 @@ if (!isset($_SESSION["superadmin_logged_in"]) || $_SESSION["superadmin_logged_in
                     if (d.error) return showToast(d.error, 'error');
                     showToast(d.message, 'success');
                     closeResetModal();
-                }).catch(() => showToast('Failed to reset password.', 'error'));
+                }).catch(() => showToast('Reset Fault.', 'error'));
         });
 
         document.addEventListener('DOMContentLoaded', loadAdmins);
     </script>
+
+    <!-- Create Modal -->
+    <div class="modal-backdrop" id="createModal">
+        <div class="modal-content relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-antique-400/40 to-transparent"></div>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="font-serif text-2xl font-bold text-pine-900 tracking-tight">Provision Identity</h3>
+                    <p class="text-antique-400/60 text-[0.6rem] uppercase tracking-widest font-black mt-1">Authorized Creation</p>
+                </div>
+                <button onclick="closeCreateModal()" class="w-10 h-10 rounded-xl bg-paper-100/50 border border-paper-200 flex items-center justify-center text-pine-700/40 hover:text-pine-900 transition-all"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form id="createAdminForm" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-[0.65rem] font-black text-antique-400/80 uppercase tracking-widest ml-1">Full Legal Name</label>
+                    <input type="text" id="newFullName" placeholder="e.g. Alexander Hamilton" class="lodge-input">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-[0.65rem] font-black text-antique-400/80 uppercase tracking-widest ml-1">System Username *</label>
+                    <input type="text" id="newUsername" required placeholder="e.g. a_hamilton" class="lodge-input">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-[0.65rem] font-black text-antique-400/80 uppercase tracking-widest ml-1">Initial Key Password *</label>
+                    <input type="password" id="newPassword" required placeholder="Min. 6 entropy units" class="lodge-input">
+                </div>
+                <div class="pt-6 flex gap-4">
+                    <button type="button" onclick="closeCreateModal()" class="flex-1 py-4 rounded-2xl font-black text-[0.7rem] uppercase tracking-widest border border-paper-200 bg-paper-100/50 text-pine-700/70 hover:text-pine-900 hover:bg-paper-100/50 transition-all">Abort</button>
+                    <button type="submit" class="flex-1 py-4 rounded-2xl font-black text-[0.7rem] uppercase tracking-widest transition-all duration-300 hover:shadow-xl hover:shadow-antique-400/20 text-white" style="background:linear-gradient(135deg,#C9A96E,#b5893a)">Authorize</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Modal -->
+    <div class="modal-backdrop" id="resetModal">
+        <div class="modal-content relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-antique-400/40 to-transparent"></div>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="font-serif text-2xl font-bold text-pine-900 tracking-tight">Key Rotation</h3>
+                    <p class="text-emerald-400/60 text-[0.6rem] uppercase tracking-widest font-black mt-1" id="resetAdminLabel"></p>
+                </div>
+                <button onclick="closeResetModal()" class="w-10 h-10 rounded-xl bg-paper-100/50 border border-paper-200 flex items-center justify-center text-pine-700/40 hover:text-pine-900 transition-all"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form id="resetPasswordForm" class="space-y-6">
+                <input type="hidden" id="resetAdminId">
+                <div class="space-y-2">
+                    <label class="block text-[0.65rem] font-black text-antique-400/80 uppercase tracking-widest ml-1">New Identity Key *</label>
+                    <input type="password" id="resetNewPassword" required placeholder="Min. 6 entropy units" class="lodge-input">
+                </div>
+                <div class="pt-6 flex gap-4">
+                    <button type="button" onclick="closeResetModal()" class="flex-1 py-4 rounded-2xl font-black text-[0.7rem] uppercase tracking-widest border border-paper-200 bg-paper-100/50 text-pine-700/70 hover:text-pine-900 hover:bg-paper-100/50 transition-all">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 rounded-2xl font-black text-[0.7rem] uppercase tracking-widest transition-all duration-300 hover:shadow-xl hover:shadow-antique-400/20 text-white" style="background:linear-gradient(135deg,#C9A96E,#b5893a)">Apply Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 </body>
 </html>
