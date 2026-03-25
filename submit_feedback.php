@@ -1,14 +1,17 @@
 <?php
 /**
  * ═══════════════════════════════════════════════════════════════
- * EVENT FEEDBACK SUBMISSION SCRIPT
- * Processes POST requests from the event evaluation form.
- * Inserts into events → attendees → event_feedbacks tables.
+ * FEEDBACK SUBMISSION SCRIPT
+ * Processes POST requests from the guest feedback form.
+ * Captures ratings, comments, and guest details, then inserts
+ * them into the normalized database tables.
+ * Sends an automated "Thank You" email via PHPMailer on success.
  * ═══════════════════════════════════════════════════════════════
  */
 require_once __DIR__ . "/config.php";
 
 // ── PHPMailer ────────────────────────────────────────────────
+
 require_once __DIR__ . '/phpmailer/src/PHPMailer.php';
 require_once __DIR__ . '/phpmailer/src/SMTP.php';
 require_once __DIR__ . '/phpmailer/src/Exception.php';
