@@ -18,12 +18,12 @@ $mysqli = getDBConnection();
 
 // GET: Fetch all admin accounts
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    $result = $mysqli->query("SELECT id, username, full_name, is_active, created_at FROM admin_users ORDER BY created_at DESC");
+    $result = $mysqli->query("SELECT id, username, full_name, email, is_active, created_at FROM admin_users ORDER BY created_at DESC");
     $admins = [];
     while ($row = $result->fetch_assoc()) {
         $admins[] = $row;
     }
-    echo json_encode(["admins" => $admins]);
+    echo json_encode(["success" => true, "admins" => $admins]);
     exit();
 }
 
@@ -35,9 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $username = trim($_POST["username"] ?? "");
         $password = trim($_POST["password"] ?? "");
         $full_name = trim($_POST["full_name"] ?? "");
+        $email = trim($_POST["email"] ?? "");
 
-        if (empty($username) || empty($password)) {
-            echo json_encode(["error" => "Username and password are required."]);
+        if (empty($username) || empty($password) || empty($email)) {
+            echo json_encode(["error" => "Username, password and email are required."]);
             exit();
         }
 
@@ -59,11 +60,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $mysqli->prepare("INSERT INTO admin_users (username, password, full_name, is_active) VALUES (?, ?, ?, 1)");
-        $stmt->bind_param("sss", $username, $hashed, $full_name);
+        $stmt = $mysqli->prepare("INSERT INTO admin_users (username, password, full_name, email, is_active) VALUES (?, ?, ?, ?, 1)");
+        $stmt->bind_param("ssss", $username, $hashed, $full_name, $email);
         
         if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "Admin created successfully."]);
+            echo json_encode(["success" => true, "message" => "Admin account created successfully."]);
         } else {
             echo json_encode(["error" => "Failed to create admin."]);
         }

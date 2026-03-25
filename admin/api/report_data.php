@@ -123,12 +123,13 @@ foreach ($categories as $k => $label) {
 
 // 4. Event Breakdown (Responses per event)
 $sqlEvent = "
-    SELECT e.event_name, COUNT(ef.id) as count
+    SELECT CONCAT(e.event_name, ' (', COALESCE(l.location_name, 'N/A'), ')') as event_name, COUNT(ef.id) as count
     FROM event_feedbacks ef
     JOIN attendees a ON ef.attendee_id = a.id
     JOIN events e ON e.id = a.event_id
+    LEFT JOIN locations l ON e.location_id = l.id
     WHERE $whereClause
-    GROUP BY e.id
+    GROUP BY e.id, l.location_name
     ORDER BY count DESC
 ";
 $stmt = $mysqli->prepare($sqlEvent);
@@ -150,7 +151,7 @@ $response["daily_breakdown"] = fetchAllAndFree($stmt);
 // 6. Comments
 $sqlComments = "
     SELECT 
-        e.event_name as event,
+        CONCAT(e.event_name, ' @ ', COALESCE(l.location_name, 'N/A')) as event,
         a.attendee_name as guest_name,
         ef.overall_experience as overall_rating,
         ef.effective_aspects as effective,
@@ -160,6 +161,7 @@ $sqlComments = "
     FROM event_feedbacks ef
     JOIN attendees a ON ef.attendee_id = a.id
     JOIN events e ON e.id = a.event_id
+    LEFT JOIN locations l ON e.location_id = l.id
     WHERE $whereClause
       AND (ef.effective_aspects != '' OR ef.improvement_suggestions != '' OR ef.additional_feedback != '')
     ORDER BY ef.created_at DESC

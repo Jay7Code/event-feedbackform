@@ -15,11 +15,12 @@ $mysqli = getDBConnection();
 $id = intval($_GET["id"] ?? 0);
 if ($id <= 0) { header("Location: index.php"); exit(); }
 
-$sql = "SELECT ef.*, e.event_name, e.event_date, e.event_time, e.location,
+$sql = "SELECT ef.*, e.event_name, e.event_date, e.event_time, l.location_name as location,
                a.attendee_name, a.email, a.contact_no
         FROM event_feedbacks ef
         JOIN attendees a ON ef.attendee_id = a.id
         JOIN events e ON a.event_id = e.id
+        LEFT JOIN locations l ON e.location_id = l.id
         WHERE ef.id = ?";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("i", $id);

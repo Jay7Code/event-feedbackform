@@ -4,15 +4,32 @@ CREATE DATABASE IF NOT EXISTS `event_feedback_db`
 
 USE `event_feedback_db`;
 
--- ─── Events table ───
+-- ─── Locations table (normalized venue lookup) ───
+CREATE TABLE IF NOT EXISTS `locations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `location_name` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_location_name` (`location_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Seed default venues
+INSERT IGNORE INTO `locations` (`location_name`) VALUES
+  ('19th T'),
+  ('Adivay Hall'),
+  ('St. Patricks');
+
+-- ─── Events table (deduplicated — one row per real event) ───
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_name` varchar(255) NOT NULL,
   `event_date` date DEFAULT NULL,
   `event_time` time DEFAULT NULL,
-  `location` varchar(255) DEFAULT NULL,
+  `location_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_event_identity` (`event_name`, `event_date`, `event_time`, `location_id`),
+  FOREIGN KEY (`location_id`) REFERENCES `locations`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ─── Attendees table ───
@@ -53,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `event_feedbacks` (
 CREATE TABLE IF NOT EXISTS `admin_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `username` varchar(100) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,

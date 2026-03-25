@@ -43,7 +43,7 @@ if ($dateTo !== "") {
 
 $whereSQL = count($where) > 0 ? "WHERE " . implode(" AND ", $where) : "";
 
-$sql = "SELECT ef.id, e.event_name, e.event_date, e.location,
+$sql = "SELECT ef.id, e.event_name, e.event_date, l.location_name as location,
                a.attendee_name, a.email,
                ef.event_planning, ef.speaker_effectiveness, ef.venue_setup,
                ef.time_management, ef.audience_participation, ef.overall_experience,
@@ -52,6 +52,7 @@ $sql = "SELECT ef.id, e.event_name, e.event_date, e.location,
         FROM event_feedbacks ef
         JOIN attendees a ON ef.attendee_id = a.id
         JOIN events e ON a.event_id = e.id
+        LEFT JOIN locations l ON e.location_id = l.id
         $whereSQL
         ORDER BY ef.created_at DESC";
 
@@ -62,6 +63,33 @@ if ($types !== "") {
 $stmt->execute();
 $result = $stmt->get_result();
 $feedbacks = $result->fetch_all(MYSQLI_ASSOC);
+
+// ─── CSV Export ───
+if (isset($_GET["export_csv"]) && $_GET["export_csv"] == 1) {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=event_feedback_export_' . date('Ymd_His') . '.csv');
+    $output = fopen('php://output', 'w');
+    
+    // CSV Headers
+    fputcsv($output, [
+        'ID', 'Event Name', 'Event Date', 'Location', 'Attendee Name', 'Attendee Email',
+        'Planning', 'Speaker', 'Venue', 'Time Mgmt', 'Participation', 'Overall', 'Food', 'Tech',
+        'Future', 'Submitted At'
+    ]);
+    
+    foreach ($feedbacks as $fb) {
+        fputcsv($output, [
+            $fb['id'], $fb['event_name'], $fb['event_date'], $fb['location'],
+            $fb['attendee_name'], $fb['email'],
+            $fb['event_planning'], $fb['speaker_effectiveness'], $fb['venue_setup'],
+            $fb['time_management'], $fb['audience_participation'], $fb['overall_experience'],
+            $fb['food_beverages'], $fb['technical_support'],
+            $fb['participate_future'], $fb['created_at']
+        ]);
+    }
+    fclose($output);
+    exit();
+}
 
 // Calculate average rating for each row
 function avgRating($row) {
@@ -209,6 +237,16 @@ function avgRating($row) {
                         style="background:#153A26;color:#ffffff">
                         Apply Filter
                     </button>
+                    <?php
+                    $exportQuery = $_GET;
+                    $exportQuery['export_csv'] = 1;
+                    $exportUrl = '?' . http_build_query($exportQuery);
+                    ?>
+                    <a href="<?= htmlspecialchars($exportUrl) ?>"
+                        class="px-5 py-3.5 rounded-2xl bg-antique-400/10 border border-antique-400/20 text-antique-400 text-xs font-bold uppercase tracking-widest hover:bg-antique-400 hover:text-white transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Export CSV
+                    </a>
                     <a href="index.php"
                         class="px-5 py-3.5 rounded-2xl bg-paper-100/30 border border-paper-200 text-pine-700 text-xs font-bold uppercase tracking-widest hover:text-pine-900 hover:bg-paper-100/30 transition-all flex items-center justify-center">
                         Clear
@@ -235,21 +273,26 @@ function avgRating($row) {
             ?>
             <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-antique-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
-                <p class="text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest mb-2">Avg Rating</p>
+                <p class="text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest mb-2">Avg Satisfaction</p>
                 <div class="flex items-end gap-2">
                     <p class="text-4xl font-serif font-bold text-pine-900"><?= $avgAll ?></p>
                     <p class="text-antique-400/40 text-sm font-bold mb-1">/ 5.0</p>
                 </div>
             </div>
+            <?php
+            $excellentCount = count(array_filter($feedbacks, function($f) { $avg = avgRating($f); return $avg >= 4; }));
+            $goodCount = count(array_filter($feedbacks, function($f) { $avg = avgRating($f); return $avg >= 3 && $avg < 4; }));
+            $poorCount = count(array_filter($feedbacks, function($f) { $avg = avgRating($f); return $avg > 0 && $avg < 3; }));
+            ?>
             <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
-                <p class="text-[0.65rem] font-bold text-emerald-400/60 uppercase tracking-widest mb-2">Would Return</p>
-                <p class="text-4xl font-serif font-bold text-emerald-400"><?= $yesCount ?></p>
+                <p class="text-[0.65rem] font-bold text-emerald-400/60 uppercase tracking-widest mb-2">Excellent (4-5)</p>
+                <p class="text-4xl font-serif font-bold text-emerald-400"><?= $excellentCount ?></p>
             </div>
             <div class="glass-card-premium rounded-2xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-yellow-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
-                <p class="text-[0.65rem] font-bold text-yellow-400/60 uppercase tracking-widest mb-2">Maybe Return</p>
-                <p class="text-4xl font-serif font-bold text-yellow-400"><?= $maybeCount ?></p>
+                <div class="absolute top-0 right-0 w-24 h-24 bg-red-400/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700"></div>
+                <p class="text-[0.65rem] font-bold text-red-400/60 uppercase tracking-widest mb-2">Poor (1-2)</p>
+                <p class="text-4xl font-serif font-bold text-red-400"><?= $poorCount ?></p>
             </div>
         </div>
 

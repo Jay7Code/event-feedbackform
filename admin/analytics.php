@@ -66,6 +66,7 @@ $recentResult = $mysqli->query("
     FROM event_feedbacks ef
     JOIN attendees a ON ef.attendee_id = a.id
     JOIN events e ON a.event_id = e.id
+    LEFT JOIN locations l ON e.location_id = l.id
     ORDER BY ef.created_at DESC LIMIT 5
 ");
 $recent = $recentResult->fetch_all(MYSQLI_ASSOC);

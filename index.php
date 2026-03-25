@@ -1,3 +1,8 @@
+<?php
+require_once "config.php";
+$mysqli = getDBConnection();
+$locationResult = $mysqli->query("SELECT * FROM locations ORDER BY location_name ASC");
+?>
 <!--
   ═══════════════════════════════════════════════════════════════
   EVENT EVALUATION FORM (FRONTEND)
@@ -212,9 +217,9 @@
                             </label>
                             <select name="location" id="location_dropdown" onchange="toggleOtherLocation()" required class="elegant-input">
                                 <option value="" disabled selected>Select an extraordinary venue</option>
-                                <option value="19th T">19th T</option>
-                                <option value="Adivay Hall">Adivay Hall</option>
-                                <option value="St. Patricks">St. Patricks</option>
+                                <?php while($loc = $locationResult->fetch_assoc()): ?>
+                                    <option value="<?= htmlspecialchars($loc['location_name']) ?>"><?= htmlspecialchars($loc['location_name']) ?></option>
+                                <?php endwhile; ?>
                                 <option value="Others">Others</option>
                             </select>
                             <input type="text" id="other_location" name="other_location_text"

@@ -152,7 +152,7 @@ $data = [
     "event_name"    => htmlspecialchars(trim($_POST["event_name"] ?? "")),
     "event_date"    => !empty($_POST["event_date"]) ? $_POST["event_date"] : null,
     "event_time"    => !empty($_POST["event_time"]) ? $_POST["event_time"] : null,
-    "location"      => ($_POST["location"] ?? "") === "Others"
+    "location_raw"  => ($_POST["location"] ?? "") === "Others"
                         ? htmlspecialchars(trim($_POST["other_location_text"] ?? ""))
                         : htmlspecialchars(trim($_POST["location"] ?? "")),
 
@@ -183,16 +183,52 @@ $success = false;
 try {
     $mysqli->begin_transaction();
 
-    // 1. Insert into events table
-    $sqlEvent = "INSERT INTO events (event_name, event_date, event_time, location) VALUES (?, ?, ?, ?)";
-    $stmtEvent = $mysqli->prepare($sqlEvent);
-    $stmtEvent->bind_param("ssss",
+    // 1. Resolve location_id from the locations table (insert if new)
+    $location_id = null;
+    if (!empty($data["location_raw"])) {
+        $stmtLoc = $mysqli->prepare("SELECT id FROM locations WHERE location_name = ?");
+        $stmtLoc->bind_param("s", $data["location_raw"]);
+        $stmtLoc->execute();
+        $locResult = $stmtLoc->get_result();
+        if ($locRow = $locResult->fetch_assoc()) {
+            $location_id = $locRow["id"];
+        } else {
+            $stmtLocInsert = $mysqli->prepare("INSERT INTO locations (location_name) VALUES (?)");
+            $stmtLocInsert->bind_param("s", $data["location_raw"]);
+            $stmtLocInsert->execute();
+            $location_id = $mysqli->insert_id;
+        }
+    }
+
+    // 2. Find existing event or insert a new one (deduplicated)
+    $stmtFind = $mysqli->prepare(
+        "SELECT id FROM events
+         WHERE event_name = ?
+           AND (event_date = ? OR (event_date IS NULL AND ? IS NULL))
+           AND (event_time = ? OR (event_time IS NULL AND ? IS NULL))
+           AND (location_id = ? OR (location_id IS NULL AND ? IS NULL))
+         LIMIT 1"
+    );
+    $stmtFind->bind_param("sssssii",
         $data["event_name"],
-        $data["event_date"],
-        $data["event_time"],
-        $data["location"]);
-    $stmtEvent->execute();
-    $event_id = $mysqli->insert_id;
+        $data["event_date"], $data["event_date"],
+        $data["event_time"], $data["event_time"],
+        $location_id, $location_id);
+    $stmtFind->execute();
+    $eventResult = $stmtFind->get_result();
+
+    if ($eventRow = $eventResult->fetch_assoc()) {
+        $event_id = $eventRow["id"];
+    } else {
+        $stmtEvent = $mysqli->prepare("INSERT INTO events (event_name, event_date, event_time, location_id) VALUES (?, ?, ?, ?)");
+        $stmtEvent->bind_param("sssi",
+            $data["event_name"],
+            $data["event_date"],
+            $data["event_time"],
+            $location_id);
+        $stmtEvent->execute();
+        $event_id = $mysqli->insert_id;
+    }
 
     // 2. Insert into attendees table
     $sqlAttendee = "INSERT INTO attendees (event_id, attendee_name, email, contact_no) VALUES (?, ?, ?, ?)";
