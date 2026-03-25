@@ -45,10 +45,10 @@ function sendThankYouEmail(string $guestName, string $guestEmail): bool
                         <tr>
                             <td align="center" style="padding: 20px 40px 20px 40px;">
                                 <h1 style="margin: 0 0 6px 0; font-family: \'Playfair Display\', serif; font-size: 28px; font-weight: 700; color: #153A26;">
-                                    Event Intelligence
+                                    John Hay Hotels
                                 </h1>
                                 <p style="margin: 0; font-family: \'Inter\', Arial, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #C0A062;">
-                                    Feedback Manifest
+                                    Forest Wing
                                 </p>
                             </td>
                         </tr>
@@ -77,7 +77,7 @@ function sendThankYouEmail(string $guestName, string $guestEmail): bool
 
                                             <!-- Main message -->
                                             <p style="margin: 0 0 28px 0; font-family: \'Inter\', sans-serif; font-size: 15px; line-height: 1.6; color: #333333; text-align: center;">
-                                                Your contribution has been successfully cataloged. These insights are vital to our continuous strategic refinement and help us deliver exceptional experiences.
+                                                Your feedback is invaluable to us. It helps us continue delivering the exceptional experience you deserve at John Hay Hotels.
                                             </p>
 
                                             <!-- Divider -->
@@ -93,25 +93,24 @@ function sendThankYouEmail(string $guestName, string $guestEmail): bool
 
                                             <!-- Closing message -->
                                             <p style="margin: 0; font-family: \'Inter\', sans-serif; font-size: 14px; font-weight: 500; color: #666666; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
-                                                Official Recognition of Participation
+                                               We look forward to welcoming you again soon.
                                             </p>
+                                            <p style="margin: 0; font-family: \'Inter\', sans-serif; font-size: 12px; font-weight: 400; color: #888888; text-align: center; line-height: 1.5;">
+    <strong>Your privacy matters.</strong> The information provided in this form will be used exclusively to process your feedback and improve our services.
+</p>
+
                                         </td>
-                                    </tr>
+                                    </tr>   
                                 </table>
                             </td>
                         </tr>
                     </table>
 
                     <!-- Footer -->
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="width: 100%; max-width: 600px; margin-top: 20px;">
-                        <tr>
-                            <td align="center" style="padding: 24px 40px;">
-                                <p style="margin: 0; font-family: \'Inter\', Arial, sans-serif; font-size: 10px; font-weight: 600; color: #999999; text-transform: uppercase; letter-spacing: 2px;">
-                                    United Performance Systems
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
+                     <footer class="text-center py-10 border-t border-paper-200/50 bg-paper-100/30">
+        <p class="font-serif text-xl text-pine-900 mb-2">John Hay Hotels</p>
+        <p class="text-pine-700/60 text-xs font-medium uppercase tracking-[0.2em]">Forest Wing - Camp John Hay - Baguio City, 2600</p>
+    </footer>
 
                 </td>
             </tr>
@@ -131,7 +130,7 @@ function sendThankYouEmail(string $guestName, string $guestEmail): bool
         $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
         $mail->addAddress($guestEmail);
         $mail->isHTML(true);
-        $mail->Subject = 'Official Recognition of Participation';
+        $mail->Subject = 'Thank You for Your Feedback';
         $mail->Body = $htmlBody;
         $mail->send();
         return true;
@@ -325,7 +324,7 @@ try {
                     </h2>
                     
                     <p class="text-pine-800/80 text-lg leading-relaxed mb-8 fade-up" style="animation-delay: 0.4s">
-                        Your contribution has been successfully cataloged. These insights are vital to our continuous strategic refinement.
+                       Your feedback is invaluable to us. It helps us continue delivering the exceptional experience you deserve at John Hay Hotels.
                     </p>
 
                     <div class="flex items-center justify-center gap-4 mb-8 fade-up" style="animation-delay: 0.5s">
@@ -335,7 +334,7 @@ try {
                     </div>
 
                     <p class="text-pine-700/60 text-sm font-medium uppercase tracking-widest fade-up" style="animation-delay: 0.6s">
-                        Official Recognition of Participation
+                        We look forward to welcoming you again soon.
                     </p>
                 </div>
             </div>
