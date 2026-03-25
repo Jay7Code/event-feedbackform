@@ -337,6 +337,7 @@ $recent = $recentResult->fetch_all(MYSQLI_ASSOC);
 
         <?php endif; ?>
     </main>
+    <script src="../js/auto_refresh.js"></script>
 </body>
 </html>
 

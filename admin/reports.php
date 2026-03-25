@@ -514,5 +514,6 @@ if (!isset($_SESSION["admin_logged_in"]) || $_SESSION["admin_logged_in"] !== tru
 
     })();
     </script>
+    <script src="../js/auto_refresh.js"></script>
 </body>
 </html>

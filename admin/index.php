@@ -362,5 +362,6 @@ function avgRating($row) {
 </html>
 
     </main>
+    <script src="../js/auto_refresh.js"></script>
 </body>
 </html>
