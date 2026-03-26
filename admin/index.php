@@ -232,11 +232,6 @@ function avgRating($row) {
                         class="w-full px-4 py-3 rounded-2xl bg-paper-100/30 border border-paper-200 text-pine-900 text-sm focus:border-antique-400/40 focus:outline-none focus:ring-4 focus:ring-antique-400/5 transition-all">
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit"
-                        class="flex-1 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:shadow-lg hover:shadow-antique-400/20 active:scale-95"
-                        style="background:#153A26;color:#ffffff">
-                        Apply Filter
-                    </button>
                     <?php
                     $exportQuery = $_GET;
                     $exportQuery['export_csv'] = 1;
