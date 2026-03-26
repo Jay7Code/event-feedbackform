@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `ef_locations` (
 INSERT IGNORE INTO `ef_locations` (`location_name`) VALUES
   ('19th T'),
   ('Adivay Hall'),
-  ('St. Patricks');
+  ('St. Patrick''s');
 
 -- ─── Events table (deduplicated — one row per real event) ───
 CREATE TABLE IF NOT EXISTS `ef_events` (

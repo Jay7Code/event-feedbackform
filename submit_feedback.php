@@ -149,12 +149,12 @@ $mysqli = getDBConnection();
 
 $data = [
     // Event overview
-    "event_name"    => htmlspecialchars(trim($_POST["event_name"] ?? "")),
+    "event_name"    => trim($_POST["event_name"] ?? ""),
     "event_date"    => !empty($_POST["event_date"]) ? $_POST["event_date"] : null,
     "event_time"    => !empty($_POST["event_time"]) ? $_POST["event_time"] : null,
     "location_raw"  => ($_POST["location"] ?? "") === "Others"
-                        ? htmlspecialchars(trim($_POST["other_location_text"] ?? ""))
-                        : htmlspecialchars(trim($_POST["location"] ?? "")),
+                        ? trim($_POST["other_location_text"] ?? "")
+                        : trim($_POST["location"] ?? ""),
 
     // Ratings (1-5)
     "event_planning"         => intval($_POST["event_planning"] ?? 0),
@@ -167,15 +167,15 @@ $data = [
     "technical_support"      => intval($_POST["technical_support"] ?? 0),
 
     // Open-ended   
-    "effective_aspects"       => htmlspecialchars(trim($_POST["effective_aspects"] ?? "")),
-    "improvement_suggestions" => htmlspecialchars(trim($_POST["improvement_suggestions"] ?? "")),
-    "participate_future"      => htmlspecialchars(trim($_POST["participate_future"] ?? "")),
-    "additional_feedback"     => htmlspecialchars(trim($_POST["additional_feedback"] ?? "")),
+    "effective_aspects"       => trim($_POST["effective_aspects"] ?? ""),
+    "improvement_suggestions" => trim($_POST["improvement_suggestions"] ?? ""),
+    "participate_future"      => trim($_POST["participate_future"] ?? ""),
+    "additional_feedback"     => trim($_POST["additional_feedback"] ?? ""),
 
     // Attendee info
-    "attendee_name" => htmlspecialchars(trim($_POST["attendee_name"] ?? "")),
-    "email"         => htmlspecialchars(trim($_POST["email"] ?? "")),
-    "contact_no"    => htmlspecialchars(trim($_POST["contact_no"] ?? "")),
+    "attendee_name" => trim($_POST["attendee_name"] ?? ""),
+    "email"         => trim($_POST["email"] ?? ""),
+    "contact_no"    => trim($_POST["contact_no"] ?? ""),
 ];
 
 $success = false;
