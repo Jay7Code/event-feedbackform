@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
 $mysqli = getDBConnection();
-$locationResult = $mysqli->query("SELECT * FROM locations ORDER BY location_name ASC");
+$locationResult = $mysqli->query("SELECT * FROM ef_locations ORDER BY location_name ASC");
 ?>
 <!--
   ═══════════════════════════════════════════════════════════════

@@ -341,11 +341,7 @@ if (!isset($_SESSION["admin_logged_in"]) || $_SESSION["admin_logged_in"] !== tru
         function buildModalSection(title, desc, tblHtml) {
             var sHtml = '<div class="report-section mb-12 fade-up">';
             sHtml += '<h3 class="font-serif text-xl font-bold text-pine-900 mb-6 border-b border-antique-400/20 pb-4">' + title + '</h3>';
-            sHtml += '<div class="no-print glass-card-premium rounded-2xl p-6 mb-6 flex justify-between items-center bg-paper-100/30">';
-            sHtml += '<div><div class="text-sm font-bold text-pine-900">Detailed Breakdown</div><div class="text-xs text-pine-700/70 mt-1">' + desc + '</div></div>';
-            sHtml += '<button type="button" class="btn-open-modal px-5 py-2.5 rounded-xl bg-antique-400/5 hover:bg-antique-400/10 border border-antique-400/20 text-antique-400 text-[0.65rem] uppercase tracking-widest font-black transition-all hover:scale-105 active:scale-95" data-title="' + escapeHtml(title) + '" data-content="' + encodeURIComponent(tblHtml) + '">View Details</button>';
-            sHtml += '</div>';
-            sHtml += '<div class="print-only-table">' + tblHtml + '</div>';
+            sHtml += '<div class="border-b border-paper-200 overflow-y-auto max-h-[400px] print:max-h-none print:overflow-visible">' + tblHtml + '</div>';
             sHtml += '</div>';
             return sHtml;
         }
@@ -385,19 +381,19 @@ if (!isset($_SESSION["admin_logged_in"]) || $_SESSION["admin_logged_in"] !== tru
             html += '</div></div>';
 
             // Categories
-            var catTable = '<table class="report-table w-full text-sm"><thead><tr class="bg-paper-100/30"><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Category</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Avg Score</th></tr></thead><tbody class="divide-y divide-paper-200">';
+            var catTable = '<table class="report-table w-full text-sm"><thead><tr class="bg-paper-100/30"><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest border-b border-paper-200">Category</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest border-b border-paper-200">Avg Score</th></tr></thead><tbody class="divide-y divide-paper-200">';
             (data.category_averages || []).forEach(function(c) {
                 var cls = scoreClass(c.avg);
-                catTable += '<tr class="hover:bg-paper-100/30"><td>' + c.label + '</td><td class="text-center font-black ' + cls + '">' + (c.avg > 0 ? c.avg.toFixed(1) + '/5' : 'N/A') + '</td></tr>';
+                catTable += '<tr class="hover:bg-paper-100/30 border-b border-paper-200/50"><td class="px-6 py-4">' + c.label + '</td><td class="px-6 py-4 text-center font-black ' + cls + '">' + (c.avg > 0 ? c.avg.toFixed(1) + '/5' : 'N/A') + '</td></tr>';
             });
             catTable += '</tbody></table>';
             html += buildModalSection('Category Ratings', 'Average scores mapped across evaluation criteria.', catTable);
 
             // Event Breakdown
             if (data.event_breakdown && data.event_breakdown.length > 0) {
-                var evtTable = '<table class="report-table w-full text-sm"><thead><tr class="bg-paper-100/30"><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Event Session Name</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest">Quantity</th></tr></thead><tbody class="divide-y divide-paper-200">';
+                var evtTable = '<table class="report-table w-full text-sm"><thead><tr class="bg-paper-100/30"><th class="px-6 py-4 text-left text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest border-b border-paper-200">Event Session Name</th><th class="px-6 py-4 text-center text-[0.65rem] font-bold text-antique-400/60 uppercase tracking-widest border-b border-paper-200">Quantity</th></tr></thead><tbody class="divide-y divide-paper-200">';
                 data.event_breakdown.forEach(function(e) {
-                    evtTable += '<tr class="hover:bg-paper-100/30"><td>' + escapeHtml(e.event_name) + '</td><td class="text-center font-bold text-pine-800">' + e.count + '</td></tr>';
+                    evtTable += '<tr class="hover:bg-paper-100/30 border-b border-paper-200/50"><td class="px-6 py-4">' + escapeHtml(e.event_name) + '</td><td class="px-6 py-4 text-center font-bold text-pine-800">' + e.count + '</td></tr>';
                 });
                 evtTable += '</tbody></table>';
                 html += buildModalSection('Event Breakdown', 'Quantity of feedback submissions categorized by event.', evtTable);

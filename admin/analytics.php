@@ -25,16 +25,16 @@ $ratingCategories = [
 ];
 
 // Get totals
-$totalResult = $mysqli->query("SELECT COUNT(*) as cnt FROM event_feedbacks");
+$totalResult = $mysqli->query("SELECT COUNT(*) as cnt FROM ef_event_feedbacks");
 $totalCount = $totalResult->fetch_assoc()["cnt"];
 
 // Get averages
 $avgCols = implode(", ", array_map(fn($k) => "ROUND(AVG(NULLIF($k, 0)), 2) as avg_$k", array_keys($ratingCategories)));
-$avgResult = $mysqli->query("SELECT $avgCols FROM event_feedbacks");
+$avgResult = $mysqli->query("SELECT $avgCols FROM ef_event_feedbacks");
 $avgs = $avgResult->fetch_assoc();
 
 // Participation breakdown
-$partResult = $mysqli->query("SELECT participate_future, COUNT(*) as cnt FROM event_feedbacks GROUP BY participate_future");
+$partResult = $mysqli->query("SELECT participate_future, COUNT(*) as cnt FROM ef_event_feedbacks GROUP BY participate_future");
 $participation = [];
 while ($row = $partResult->fetch_assoc()) {
     $participation[$row["participate_future"]] = intval($row["cnt"]);
@@ -43,14 +43,14 @@ while ($row = $partResult->fetch_assoc()) {
 // Rating distribution (1-5) for all categories combined
 $distResult = $mysqli->query("
     SELECT val, COUNT(*) as cnt FROM (
-        SELECT event_planning as val FROM event_feedbacks WHERE event_planning > 0
-        UNION ALL SELECT speaker_effectiveness FROM event_feedbacks WHERE speaker_effectiveness > 0
-        UNION ALL SELECT venue_setup FROM event_feedbacks WHERE venue_setup > 0
-        UNION ALL SELECT time_management FROM event_feedbacks WHERE time_management > 0
-        UNION ALL SELECT audience_participation FROM event_feedbacks WHERE audience_participation > 0
-        UNION ALL SELECT overall_experience FROM event_feedbacks WHERE overall_experience > 0
-        UNION ALL SELECT food_beverages FROM event_feedbacks WHERE food_beverages > 0
-        UNION ALL SELECT technical_support FROM event_feedbacks WHERE technical_support > 0
+        SELECT event_planning as val FROM ef_event_feedbacks WHERE event_planning > 0
+        UNION ALL SELECT speaker_effectiveness FROM ef_event_feedbacks WHERE speaker_effectiveness > 0
+        UNION ALL SELECT venue_setup FROM ef_event_feedbacks WHERE venue_setup > 0
+        UNION ALL SELECT time_management FROM ef_event_feedbacks WHERE time_management > 0
+        UNION ALL SELECT audience_participation FROM ef_event_feedbacks WHERE audience_participation > 0
+        UNION ALL SELECT overall_experience FROM ef_event_feedbacks WHERE overall_experience > 0
+        UNION ALL SELECT food_beverages FROM ef_event_feedbacks WHERE food_beverages > 0
+        UNION ALL SELECT technical_support FROM ef_event_feedbacks WHERE technical_support > 0
     ) as all_ratings GROUP BY val ORDER BY val
 ");
 $distribution = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0];
@@ -63,10 +63,10 @@ $maxDist = max($distribution) ?: 1;
 $recentResult = $mysqli->query("
     SELECT ef.id, e.event_name, a.attendee_name, ef.created_at,
            ef.overall_experience
-    FROM event_feedbacks ef
-    JOIN attendees a ON ef.attendee_id = a.id
-    JOIN events e ON a.event_id = e.id
-    LEFT JOIN locations l ON e.location_id = l.id
+    FROM ef_event_feedbacks ef
+    JOIN ef_attendees a ON ef.attendee_id = a.id
+    JOIN ef_events e ON a.event_id = e.id
+    LEFT JOIN ef_locations l ON e.location_id = l.id
     ORDER BY ef.created_at DESC LIMIT 5
 ");
 $recent = $recentResult->fetch_all(MYSQLI_ASSOC);

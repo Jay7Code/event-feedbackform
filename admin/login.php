@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = "Please enter both username and password.";
     } else {
         $mysqli = getDBConnection();
-        $stmt = $mysqli->prepare("SELECT id, username, password, is_active FROM admin_users WHERE username = ?");
+        $stmt = $mysqli->prepare("SELECT id, username, password, is_active FROM ef_admin_users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();

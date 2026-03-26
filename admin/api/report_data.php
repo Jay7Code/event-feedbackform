@@ -64,7 +64,7 @@ $sqlSummary = "
         SUM(CASE WHEN ef.overall_experience IN (1,2) THEN 1 ELSE 0 END) as count_poor,
         SUM(CASE WHEN ef.overall_experience = 3 THEN 1 ELSE 0 END) as count_good,
         SUM(CASE WHEN ef.overall_experience IN (4,5) THEN 1 ELSE 0 END) as count_excellent
-    FROM event_feedbacks ef
+    FROM ef_event_feedbacks ef
     WHERE $whereClause
 ";
 $stmt = $mysqli->prepare($sqlSummary);
@@ -82,7 +82,7 @@ $response["summary"] = [
 // 2. NPS Distribution (1-5)
 $sqlDist = "
     SELECT ef.overall_experience as score, COUNT(*) as count
-    FROM event_feedbacks ef
+    FROM ef_event_feedbacks ef
     WHERE $whereClause AND ef.overall_experience > 0
     GROUP BY ef.overall_experience
 ";
@@ -109,7 +109,7 @@ $catSelects = [];
 foreach (array_keys($categories) as $k) {
     $catSelects[] = "ROUND(AVG(NULLIF(ef.$k, 0)), 1) as avg_$k";
 }
-$sqlCat = "SELECT " . implode(", ", $catSelects) . " FROM event_feedbacks ef WHERE $whereClause";
+$sqlCat = "SELECT " . implode(", ", $catSelects) . " FROM ef_event_feedbacks ef WHERE $whereClause";
 $stmt = $mysqli->prepare($sqlCat);
 if ($types) $stmt->bind_param($types, ...$params);
 $catData = fetchAllAndFree($stmt)[0];
@@ -124,10 +124,10 @@ foreach ($categories as $k => $label) {
 // 4. Event Breakdown (Responses per event)
 $sqlEvent = "
     SELECT CONCAT(e.event_name, ' (', COALESCE(l.location_name, 'N/A'), ')') as event_name, COUNT(ef.id) as count
-    FROM event_feedbacks ef
-    JOIN attendees a ON ef.attendee_id = a.id
-    JOIN events e ON e.id = a.event_id
-    LEFT JOIN locations l ON e.location_id = l.id
+    FROM ef_event_feedbacks ef
+    JOIN ef_attendees a ON ef.attendee_id = a.id
+    JOIN ef_events e ON e.id = a.event_id
+    LEFT JOIN ef_locations l ON e.location_id = l.id
     WHERE $whereClause
     GROUP BY e.id, l.location_name
     ORDER BY count DESC
@@ -139,7 +139,7 @@ $response["event_breakdown"] = fetchAllAndFree($stmt);
 // 5. Daily Breakdown
 $sqlDaily = "
     SELECT DATE(ef.created_at) as date, COUNT(*) as count, ROUND(AVG(NULLIF(ef.overall_experience, 0)), 1) as avg_rating
-    FROM event_feedbacks ef
+    FROM ef_event_feedbacks ef
     WHERE $whereClause
     GROUP BY DATE(ef.created_at)
     ORDER BY date ASC
@@ -158,10 +158,10 @@ $sqlComments = "
         ef.improvement_suggestions as improvement,
         ef.additional_feedback as additional,
         ef.created_at
-    FROM event_feedbacks ef
-    JOIN attendees a ON ef.attendee_id = a.id
-    JOIN events e ON e.id = a.event_id
-    LEFT JOIN locations l ON e.location_id = l.id
+    FROM ef_event_feedbacks ef
+    JOIN ef_attendees a ON ef.attendee_id = a.id
+    JOIN ef_events e ON e.id = a.event_id
+    LEFT JOIN ef_locations l ON e.location_id = l.id
     WHERE $whereClause
       AND (ef.effective_aspects != '' OR ef.improvement_suggestions != '' OR ef.additional_feedback != '')
     ORDER BY ef.created_at DESC

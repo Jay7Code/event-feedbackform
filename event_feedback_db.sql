@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS `event_feedback_db`
 USE `event_feedback_db`;
 
 -- ─── Locations table (normalized venue lookup) ───
-CREATE TABLE IF NOT EXISTS `locations` (
+CREATE TABLE IF NOT EXISTS `ef_locations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `location_name` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -14,13 +14,13 @@ CREATE TABLE IF NOT EXISTS `locations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Seed default venues
-INSERT IGNORE INTO `locations` (`location_name`) VALUES
+INSERT IGNORE INTO `ef_locations` (`location_name`) VALUES
   ('19th T'),
   ('Adivay Hall'),
   ('St. Patricks');
 
 -- ─── Events table (deduplicated — one row per real event) ───
-CREATE TABLE IF NOT EXISTS `events` (
+CREATE TABLE IF NOT EXISTS `ef_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_name` varchar(255) NOT NULL,
   `event_date` date DEFAULT NULL,
@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS `events` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_event_identity` (`event_name`, `event_date`, `event_time`, `location_id`),
-  FOREIGN KEY (`location_id`) REFERENCES `locations`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`location_id`) REFERENCES `ef_locations`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ─── Attendees table ───
-CREATE TABLE IF NOT EXISTS `attendees` (
+CREATE TABLE IF NOT EXISTS `ef_attendees` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) NOT NULL,
   `attendee_name` varchar(255) DEFAULT NULL,
@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS `attendees` (
   `contact_no` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`event_id`) REFERENCES `events`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`event_id`) REFERENCES `ef_events`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ─── Event Feedbacks table ───
-CREATE TABLE IF NOT EXISTS `event_feedbacks` (
+CREATE TABLE IF NOT EXISTS `ef_event_feedbacks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `attendee_id` int(11) NOT NULL,
   `event_planning` tinyint(4) NOT NULL DEFAULT 0,
@@ -62,12 +62,12 @@ CREATE TABLE IF NOT EXISTS `event_feedbacks` (
   `additional_feedback` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`attendee_id`) REFERENCES `attendees`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`attendee_id`) REFERENCES `ef_attendees`(`id`) ON DELETE CASCADE,
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ─── Admin users table ───
-CREATE TABLE IF NOT EXISTS `admin_users` (
+CREATE TABLE IF NOT EXISTS `ef_admin_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `full_name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,

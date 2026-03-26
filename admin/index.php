@@ -49,10 +49,10 @@ $sql = "SELECT ef.id, e.event_name, e.event_date, l.location_name as location,
                ef.time_management, ef.audience_participation, ef.overall_experience,
                ef.food_beverages, ef.technical_support, ef.participate_future,
                ef.created_at
-        FROM event_feedbacks ef
-        JOIN attendees a ON ef.attendee_id = a.id
-        JOIN events e ON a.event_id = e.id
-        LEFT JOIN locations l ON e.location_id = l.id
+        FROM ef_event_feedbacks ef
+        JOIN ef_attendees a ON ef.attendee_id = a.id
+        JOIN ef_events e ON a.event_id = e.id
+        LEFT JOIN ef_locations l ON e.location_id = l.id
         $whereSQL
         ORDER BY ef.created_at DESC";
 

@@ -18,7 +18,7 @@ $mysqli = getDBConnection();
 
 // GET: Fetch all admin accounts
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    $result = $mysqli->query("SELECT id, username, full_name, email, is_active, created_at FROM admin_users ORDER BY created_at DESC");
+    $result = $mysqli->query("SELECT id, username, full_name, email, is_active, created_at FROM ef_admin_users ORDER BY created_at DESC");
     $admins = [];
     while ($row = $result->fetch_assoc()) {
         $admins[] = $row;
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Check if username exists
-        $stmt = $mysqli->prepare("SELECT id FROM admin_users WHERE username = ?");
+        $stmt = $mysqli->prepare("SELECT id FROM ef_admin_users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $mysqli->prepare("INSERT INTO admin_users (username, password, full_name, email, is_active) VALUES (?, ?, ?, ?, 1)");
+        $stmt = $mysqli->prepare("INSERT INTO ef_admin_users (username, password, full_name, email, is_active) VALUES (?, ?, ?, ?, 1)");
         $stmt->bind_param("ssss", $username, $hashed, $full_name, $email);
         
         if ($stmt->execute()) {
@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($action === "toggle_status") {
         $admin_id = intval($_POST["admin_id"] ?? 0);
         
-        $stmt = $mysqli->prepare("SELECT is_active FROM admin_users WHERE id = ?");
+        $stmt = $mysqli->prepare("SELECT is_active FROM ef_admin_users WHERE id = ?");
         $stmt->bind_param("i", $admin_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $new_status = $row["is_active"] == 1 ? 0 : 1;
             $stmt->close();
             
-            $stmt = $mysqli->prepare("UPDATE admin_users SET is_active = ? WHERE id = ?");
+            $stmt = $mysqli->prepare("UPDATE ef_admin_users SET is_active = ? WHERE id = ?");
             $stmt->bind_param("ii", $new_status, $admin_id);
             if ($stmt->execute()) {
                 $statusText = $new_status == 1 ? "Activated" : "Deactivated";
@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         $hashed = password_hash($new_password, PASSWORD_DEFAULT);
-        $stmt = $mysqli->prepare("UPDATE admin_users SET password = ? WHERE id = ?");
+        $stmt = $mysqli->prepare("UPDATE ef_admin_users SET password = ? WHERE id = ?");
         $stmt->bind_param("si", $hashed, $admin_id);
         
         if ($stmt->execute()) {

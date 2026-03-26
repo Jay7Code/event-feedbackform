@@ -166,7 +166,7 @@ $data = [
     "food_beverages"         => intval($_POST["food_beverages"] ?? 0),
     "technical_support"      => intval($_POST["technical_support"] ?? 0),
 
-    // Open-ended
+    // Open-ended   
     "effective_aspects"       => htmlspecialchars(trim($_POST["effective_aspects"] ?? "")),
     "improvement_suggestions" => htmlspecialchars(trim($_POST["improvement_suggestions"] ?? "")),
     "participate_future"      => htmlspecialchars(trim($_POST["participate_future"] ?? "")),
@@ -186,14 +186,14 @@ try {
     // 1. Resolve location_id from the locations table (insert if new)
     $location_id = null;
     if (!empty($data["location_raw"])) {
-        $stmtLoc = $mysqli->prepare("SELECT id FROM locations WHERE location_name = ?");
+        $stmtLoc = $mysqli->prepare("SELECT id FROM ef_locations WHERE location_name = ?");
         $stmtLoc->bind_param("s", $data["location_raw"]);
         $stmtLoc->execute();
         $locResult = $stmtLoc->get_result();
         if ($locRow = $locResult->fetch_assoc()) {
             $location_id = $locRow["id"];
         } else {
-            $stmtLocInsert = $mysqli->prepare("INSERT INTO locations (location_name) VALUES (?)");
+            $stmtLocInsert = $mysqli->prepare("INSERT INTO ef_locations (location_name) VALUES (?)");
             $stmtLocInsert->bind_param("s", $data["location_raw"]);
             $stmtLocInsert->execute();
             $location_id = $mysqli->insert_id;
@@ -202,7 +202,7 @@ try {
 
     // 2. Find existing event or insert a new one (deduplicated)
     $stmtFind = $mysqli->prepare(
-        "SELECT id FROM events
+        "SELECT id FROM ef_events
          WHERE event_name = ?
            AND (event_date = ? OR (event_date IS NULL AND ? IS NULL))
            AND (event_time = ? OR (event_time IS NULL AND ? IS NULL))
@@ -220,7 +220,7 @@ try {
     if ($eventRow = $eventResult->fetch_assoc()) {
         $event_id = $eventRow["id"];
     } else {
-        $stmtEvent = $mysqli->prepare("INSERT INTO events (event_name, event_date, event_time, location_id) VALUES (?, ?, ?, ?)");
+        $stmtEvent = $mysqli->prepare("INSERT INTO ef_events (event_name, event_date, event_time, location_id) VALUES (?, ?, ?, ?)");
         $stmtEvent->bind_param("sssi",
             $data["event_name"],
             $data["event_date"],
@@ -231,7 +231,7 @@ try {
     }
 
     // 2. Insert into attendees table
-    $sqlAttendee = "INSERT INTO attendees (event_id, attendee_name, email, contact_no) VALUES (?, ?, ?, ?)";
+    $sqlAttendee = "INSERT INTO ef_attendees (event_id, attendee_name, email, contact_no) VALUES (?, ?, ?, ?)";
     $stmtAttendee = $mysqli->prepare($sqlAttendee);
     $stmtAttendee->bind_param("isss",
         $event_id,
@@ -242,7 +242,7 @@ try {
     $attendee_id = $mysqli->insert_id;
 
     // 3. Insert into event_feedbacks table
-    $sqlFeedback = "INSERT INTO event_feedbacks (
+    $sqlFeedback = "INSERT INTO ef_event_feedbacks (
         attendee_id, event_planning, speaker_effectiveness, venue_setup,
         time_management, audience_participation, overall_experience,
         food_beverages, technical_support, effective_aspects,
@@ -379,7 +379,7 @@ try {
                 <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                 </svg>
-                Return to feedback <form action=""></form>
+                Return to feedback <span class="lowercase tracking-normal font-medium text-antique-400/70 ml-1">(auto-redirecting in <span id="countdown">15</span>s)</span>
             </a>
         <?php else: ?>
             <div class="glass-card-premium rounded-[2rem] p-12 mb-12 scale-animated">
@@ -400,5 +400,18 @@ try {
         <p class="font-serif text-xl text-pine-900 mb-2">John Hay Hotels</p>
         <p class="text-pine-700/60 text-xs font-medium uppercase tracking-[0.2em]">Forest Wing - Camp John Hay - Baguio City, 2600</p>
     </footer>
+
+    <script>
+        let seconds = 15;
+        const countdownEl = document.getElementById('countdown');
+        const timer = setInterval(() => {
+            seconds--;
+            if (countdownEl) countdownEl.innerText = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = 'index.php';
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
